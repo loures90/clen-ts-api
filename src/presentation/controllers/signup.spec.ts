@@ -4,22 +4,24 @@ import { InvalidParamError, MissingParamError, ServerError } from '../errors'
 
 interface SutTypes {
   sut: SignupController
-  emailValidatorStub: EmailValidatorStub
+  emailValidatorStub: EmailValidator
 }
 
 const makeSut = (): SutTypes => {
-  const emailValidatorStub = new EmailValidatorStub()
+  const emailValidatorStub = makeEmailValidatorStub()
   const sut = new SignupController(emailValidatorStub)
   return {
     sut,
     emailValidatorStub
   }
 }
-
-class EmailValidatorStub implements EmailValidator {
-  isValid (email: string): boolean {
-    return true
+const makeEmailValidatorStub = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    isValid (email: string): boolean {
+      return true
+    }
   }
+  return new EmailValidatorStub()
 }
 
 describe('Signup Controller', () => {
