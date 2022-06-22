@@ -10,6 +10,8 @@ Main layer is going to couple all the layers of the project.
 
 https://refactoring.guru/design-patterns/composite
 
+## 3. Factory:
+
 
 
 # Clean Code
@@ -26,3 +28,5 @@ https://deviq.com/principles/dependency-inversion-principle
 
 SUT - System Under Test
 STUB - System Test Double 
+
+The main layer is the most coupled layer of the repository, it sees all others layers.
