@@ -14,5 +14,10 @@ export default {
   async getCollection (name: string): Promise<Collection > {
     const collection = await this.client.db().collection(name)
     return collection
+  },
+
+  mapper (collection: any): any {
+    const { _id, ...collectionWithoutId } = collection
+    return Object.assign({}, collectionWithoutId, { id: _id.toString() })
   }
 }
