@@ -2,22 +2,6 @@ import { SignupController } from './signup'
 import { EmailValidator, AddAccount, AddAccountModel, AccountModel } from './protocols'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 
-interface SutTypes {
-  sut: SignupController
-  emailValidatorStub: EmailValidator
-  addAccountStub: AddAccount
-}
-
-const makeSut = (): SutTypes => {
-  const emailValidatorStub = makeEmailValidatorStub()
-  const addAccountStub = makeAddAccountStub()
-  const sut = new SignupController(emailValidatorStub, addAccountStub)
-  return {
-    sut,
-    emailValidatorStub,
-    addAccountStub
-  }
-}
 const makeEmailValidatorStub = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     isValid (email: string): boolean {
@@ -39,6 +23,23 @@ const makeAddAccountStub = (): AddAccount => {
     }
   }
   return new AddAccountStub()
+}
+
+interface SutTypes {
+  sut: SignupController
+  emailValidatorStub: EmailValidator
+  addAccountStub: AddAccount
+}
+
+const makeSut = (): SutTypes => {
+  const emailValidatorStub = makeEmailValidatorStub()
+  const addAccountStub = makeAddAccountStub()
+  const sut = new SignupController(emailValidatorStub, addAccountStub)
+  return {
+    sut,
+    emailValidatorStub,
+    addAccountStub
+  }
 }
 
 describe('Signup Controller', () => {
@@ -145,7 +146,7 @@ describe('Signup Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError('error'))
   })
 
   test('Should return 400 if password and passwordConfirmation are not equal', async () => {
@@ -198,7 +199,7 @@ describe('Signup Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError('error'))
   })
 
   test('Should return 200 on success', async () => {
