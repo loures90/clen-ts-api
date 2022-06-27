@@ -11,7 +11,12 @@ Main layer is going to couple all the layers of the project.
 https://refactoring.guru/design-patterns/composite
 
 ## 3. Factory:
+Creational Design Pattern that provides an interface for creating objects in a superclass.
+https://refactoring.guru/design-patterns/factory-method
 
+## 4. Decorator:
+Attach new behaviours to objects by placing these objects inside special wrapper objects that contains behaviors.
+https://refactoring.guru/design-patterns/decorator
 
 
 # Clean Code
