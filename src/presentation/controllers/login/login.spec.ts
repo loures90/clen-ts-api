@@ -82,7 +82,7 @@ describe('Login Controller', () => {
     await sut.handle(makeFakeRequest())
     expect(validatorSpy).toHaveBeenCalledWith('any_email@email.com', 'any_password')
   })
-  test('Should return 400 if authenticator does not return an access_token', async () => {
+  test('Should return 401 if authenticator does not return an access_token', async () => {
     const { sut, authenticatorStub } = makeSut()
     jest.spyOn(authenticatorStub, 'auth').mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const httpResponse = await sut.handle(makeFakeRequest())
