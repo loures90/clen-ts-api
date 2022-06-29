@@ -7,6 +7,7 @@ https://refactoring.guru/design-patterns/adapter
 
 ## 2. Composite: 
 Main layer is going to couple all the layers of the project.
+In Presentation layer at validation, ValidationComposite class composes the validations of controllers: EmailValidation and RequiredFieldsValidation
 
 https://refactoring.guru/design-patterns/composite
 
