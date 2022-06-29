@@ -18,7 +18,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidatorStub()
-  const sut = new EmailValidation('any_email@email.com', emailValidatorStub)
+  const sut = new EmailValidation('email', emailValidatorStub)
   return {
     sut,
     emailValidatorStub
@@ -30,7 +30,7 @@ describe('Email Validation', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
     const error = sut.validate({ email: 'any_email@email.com' })
-    expect(error).toEqual(new InvalidParamError('any_email@email.com'))
+    expect(error).toEqual(new InvalidParamError('email'))
   })
 
   test('Should return calls EmailValidator with correct email', () => {
