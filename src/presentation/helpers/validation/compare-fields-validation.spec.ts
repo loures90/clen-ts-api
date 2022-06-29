@@ -10,4 +10,12 @@ describe('CompareFields Validation', () => {
     })
     expect(error).toEqual(new InvalidParamError('nameToCompare'))
   })
+  test('Should return void if fieldName and fieldNameToCompare are the same', () => {
+    const sut = new CompareFieldsValidation('name', 'nameToCompare')
+    const error = sut.validate({
+      name: 'any_name',
+      nameToCompare: 'any_name'
+    })
+    expect(error).toBeFalsy()
+  })
 })
