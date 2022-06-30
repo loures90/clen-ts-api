@@ -1,5 +1,5 @@
 import { LoginController } from './login'
-import { Authenticator, HttpRequest } from './protocols'
+import { Authenticator, AuthenticationModel, HttpRequest } from './protocols'
 import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helpers'
 import { Validation } from '../../protocols/validation'
 import { MissingParamError } from '../../errors'
@@ -15,7 +15,7 @@ const makeValidationStub = (): Validation => {
 
 const makeAuthenticator = (): Authenticator => {
   class AuthenticatorStub implements Authenticator {
-    async auth (email: string, password: string): Promise<string> {
+    async auth (authentication: AuthenticationModel): Promise<string> {
       return await new Promise(resolve => resolve('access_token'))
     }
   }
@@ -51,7 +51,10 @@ describe('Login Controller', () => {
     const { sut, authenticatorStub } = makeSut()
     const validatorSpy = jest.spyOn(authenticatorStub, 'auth')
     await sut.handle(makeFakeRequest())
-    expect(validatorSpy).toHaveBeenCalledWith('any_email@email.com', 'any_password')
+    expect(validatorSpy).toHaveBeenCalledWith({
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
   })
   test('Should return 401 if authenticator does not return an access_token', async () => {
     const { sut, authenticatorStub } = makeSut()
