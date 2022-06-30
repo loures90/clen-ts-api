@@ -1,7 +1,7 @@
 import { LoginController } from './login'
 import { Authenticator, HttpRequest } from './protocols'
-import { badRequest, ok, serverError, unauthorized } from '../../helpers/http-helpers'
-import { Validation } from '../../helpers/validation/validation'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helpers'
+import { Validation } from '../../protocols/validation'
 import { MissingParamError } from '../../errors'
 
 const makeValidationStub = (): Validation => {
