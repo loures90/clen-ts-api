@@ -36,3 +36,10 @@ SUT - System Under Test
 STUB - System Test Double 
 
 The main layer is the most coupled layer of the repository, it sees all others layers.
+
+## Safety:
+
+Differences between Encryption and Hashing:
+    https://www.geeksforgeeks.org/difference-between-hashing-and-encryption/
+    https://itnext.io/password-encryption-hashing-in-node-application-311a6f61cd65
+    
