@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { AddAccountRepository } from '../../../../data/protocols/db/add-account-repository'
 import { AccountModel } from '../../../../domain/model/account'
 import { AddAccountModel } from '../../../../domain/usecases/add-account'
@@ -16,5 +17,13 @@ export class AccountRepository implements AddAccountRepository {
     const account = await accountCollection.findOne({ email: email })
     if (!account) return null
     return mongoHelper.mapper(account)
+  }
+
+  async updateAccessToken (id: string, accessToken: string): Promise<void> {
+    const accountCollection = await mongoHelper.getCollection('accounts')
+    console.log(id)
+    await accountCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { accessToken: accessToken } })
   }
 }
