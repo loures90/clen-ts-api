@@ -6,10 +6,7 @@ export class LoginController implements Controller {
   constructor (
     private readonly authenticator: Authenticator,
     private readonly validation: Validation
-  ) {
-    this.validation = validation
-    this.authenticator = authenticator
-  }
+  ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
