@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { AddAccountRepository } from '../../../../data/protocols/db/add-account-repository'
+import { AddAccountRepository } from '../../../../data/protocols/db/account/add-account-repository'
 import { AccountModel } from '../../../../domain/model/account'
 import { AddAccountModel } from '../../../../domain/usecases/add-account'
 import mongoHelper from '../helpers/mongo-helper'
