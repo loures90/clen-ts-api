@@ -43,3 +43,13 @@ Differences between Encryption and Hashing:
     https://www.geeksforgeeks.org/difference-between-hashing-and-encryption/
     https://itnext.io/password-encryption-hashing-in-node-application-311a6f61cd65
     
+
+
+## APIs construídas no treinamento
+
+- [Cadastro](./requirements/signup.md)
+- [Login](./requirements/login.md)
+- [Criar enquete](./requirements/add-survey.md)
+- [Listar enquetes](./requirements/load-surveys.md)
+- [Responder enquete](./requirements/add-survey-result.md)
+- [Resultado da enquete](./requirements/load-survey-result.md)
