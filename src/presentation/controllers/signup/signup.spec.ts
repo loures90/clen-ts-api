@@ -1,7 +1,7 @@
 import { SignupController } from './signup'
 import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation, Authenticator, AuthenticationModel } from './protocols'
-import { MissingParamError } from '../../errors'
-import { badRequest, ok, serverError } from '../../helpers/http/http-helpers'
+import { MissingParamError, EmailAlreadyInUseError } from '../../errors'
+import { badRequest, ok, serverError, forbidden } from '../../helpers/http/http-helpers'
 
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {
@@ -121,5 +121,12 @@ describe('Signup Controller', () => {
     jest.spyOn(authenticationStub, 'auth').mockImplementationOnce(() => { throw new Error() })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 403 When email is already in use', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new EmailAlreadyInUseError()))
   })
 })
