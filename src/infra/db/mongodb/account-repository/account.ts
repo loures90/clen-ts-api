@@ -14,7 +14,7 @@ export class AccountRepository implements AddAccountRepository {
 
   async loadByEmail (email: string): Promise<AccountModel> {
     const accountCollection = await mongoHelper.getCollection('accounts')
-    const account = await accountCollection.findOne({ email: email })
+    const account = await accountCollection.findOne({ email })
     if (!account) return null
     return mongoHelper.mapper(account)
   }
@@ -24,6 +24,6 @@ export class AccountRepository implements AddAccountRepository {
     console.log(id)
     await accountCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
-      { $set: { accessToken: accessToken } })
+      { $set: { accessToken } })
   }
 }
