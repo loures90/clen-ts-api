@@ -1,5 +1,5 @@
 import { SignupController } from './signup'
-import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation } from './protocols'
+import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation, Authenticator, AuthenticationModel } from './protocols'
 import { MissingParamError } from '../../errors'
 import { badRequest, ok, serverError } from '../../helpers/http/http-helpers'
 
@@ -10,6 +10,15 @@ const makeValidationStub = (): Validation => {
     }
   }
   return new ValidationStub()
+}
+
+const makeAuthenticatorStub = (): Authenticator => {
+  class AuthenticatorStub implements Authenticator {
+    async auth (authentication: AuthenticationModel): Promise<string> {
+      return await new Promise(resolve => resolve('access_token'))
+    }
+  }
+  return new AuthenticatorStub()
 }
 
 const makeAddAccountStub = (): AddAccount => {
@@ -25,16 +34,19 @@ interface SutTypes {
   sut: SignupController
   addAccountStub: AddAccount
   validationStub: Validation
+  authenticationStub: Authenticator
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub()
   const addAccountStub = makeAddAccountStub()
-  const sut = new SignupController(addAccountStub, validationStub)
+  const authenticationStub = makeAuthenticatorStub()
+  const sut = new SignupController(addAccountStub, validationStub, authenticationStub)
   return {
     sut,
     addAccountStub,
-    validationStub
+    validationStub,
+    authenticationStub
   }
 }
 
@@ -94,5 +106,14 @@ describe('Signup Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+  test('Should call authenticator with correct value', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const validatorSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(validatorSpy).toHaveBeenCalledWith({
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
   })
 })
