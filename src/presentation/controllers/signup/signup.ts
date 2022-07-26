@@ -1,6 +1,7 @@
-import { badRequest, ok, serverError } from '../../helpers/http/http-helpers'
+import { badRequest, forbidden, ok, serverError } from '../../helpers/http/http-helpers'
 import { AddAccount, Controller, HttpRequest, HttpResponse, Authenticator } from './protocols'
 import { Validation } from '../../protocols/validation'
+import { EmailAlreadyInUseError } from '../../errors'
 
 export class SignupController implements Controller {
   constructor (
@@ -25,6 +26,9 @@ export class SignupController implements Controller {
         email,
         password
       })
+      if (!accessToken) {
+        return forbidden(new EmailAlreadyInUseError())
+      }
       return ok({ accessToken, name })
     } catch (error) {
       return serverError(error)
