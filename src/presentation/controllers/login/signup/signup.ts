@@ -1,7 +1,6 @@
-import { badRequest, forbidden, ok, serverError } from '../../helpers/http/http-helpers'
-import { AddAccount, Controller, HttpRequest, HttpResponse, Authenticator } from './protocols'
-import { Validation } from '../../protocols/validation'
-import { EmailAlreadyInUseError } from '../../errors'
+import { badRequest, forbidden, ok, serverError } from '../../../helpers/http/http-helpers'
+import { AddAccount, Controller, HttpRequest, HttpResponse, Authenticator, Validation } from './protocols'
+import { EmailAlreadyInUseError } from '../../../errors'
 
 export class SignupController implements Controller {
   constructor (
