@@ -1,8 +1,7 @@
-import { AddSurvey, AddSurveyModel } from '../../../../domain/usecases/add-survey'
-import { MissingParamError } from '../../../errors'
-import { badRequest, serverError, noContent } from '../../../helpers/http/http-helpers'
-import { HttpRequest, Validation } from '../../../protocols'
 import { AddSurveyController } from './add-survey'
+import { AddSurvey, AddSurveyModel, HttpRequest, Validation } from './protocols'
+import { badRequest, serverError, noContent } from '../../../helpers/http/http-helpers'
+import { MissingParamError } from '../../../errors'
 
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {
