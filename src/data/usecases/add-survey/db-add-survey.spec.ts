@@ -9,7 +9,7 @@ interface SutTypes {
 const makeAddSurveyRepository = (): AddSurveyRepository => {
   class AddSurveyRepositoryStub implements AddSurveyRepository {
     async add (surveyData: AddSurveyModel): Promise<void> {
-      return await new Promise(resolve => resolve())
+      return await new Promise(resolve => resolve(null))
     }
   }
   return new AddSurveyRepositoryStub()
@@ -47,5 +47,11 @@ describe('DbAddSurvey', () => {
     })
     const promise = sut.add(makeFakeSurveyData())
     await expect(promise).rejects.toThrow()
+  })
+  test('Should return null on success', async () => {
+    const { sut } = makeSut()
+    const surveyData: AddSurveyModel = makeFakeSurveyData()
+    const response = await sut.add(surveyData)
+    expect(response).toBeNull()
   })
 })
