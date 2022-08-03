@@ -10,7 +10,7 @@ export class AuthMiddleware implements Middleware {
   ) { }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const accessToken = httpRequest.header['x-access-token']
+    const accessToken = httpRequest.header?.['x-access-token']
     if (accessToken) {
       await this.loadAccountByToken.load(accessToken, this.role)
     }

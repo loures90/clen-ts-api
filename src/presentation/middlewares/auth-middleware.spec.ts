@@ -47,6 +47,11 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle({ header: {} })
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
+  test('Should return 403 if header is not provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({ })
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
   test('Should call loadAccountByToken with correct values', async () => {
     const { sut, loadAccountByTokenStub } = makeSut('any_role')
     const loadSpy = jest.spyOn(loadAccountByTokenStub, 'load')
