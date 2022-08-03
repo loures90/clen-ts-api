@@ -11,7 +11,7 @@ const makeFakeAccount = (): AccountModel => ({
 })
 
 const makeFakeHttpRequest = (): HttpRequest => ({
-  header: {
+  headers: {
     'x-access-token': 'any_token'
   }
 })
@@ -42,10 +42,10 @@ const makeSut = (role?: string): SutTypes => {
 describe('AuthMiddleware', () => {
   test('Should return 403 if x-access-token is not provided', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle({ header: {} })
+    const httpResponse = await sut.handle({ headers: {} })
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
-  test('Should return 403 if header is not provided', async () => {
+  test('Should return 403 if headers is not provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({})
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
