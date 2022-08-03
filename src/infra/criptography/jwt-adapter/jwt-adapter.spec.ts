@@ -37,5 +37,16 @@ describe('JwtAdapter', () => {
       await sut.decrypt('any_token')
       expect(veirfySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
+    test('Should return a decrypted value on success', async () => {
+      const sut = new JwtAdapter('secret')
+      const value = await sut.decrypt('any_token')
+      expect(value).toBe('any_value')
+    })
+    test('Should throw when jsonwebtoken throws', async () => {
+      const sut = new JwtAdapter('secret')
+      jest.spyOn(jsonwebtoken, 'verify').mockImplementationOnce(async () => await new Promise((resolve, reject) => reject(new Error())))
+      const promise = sut.decrypt('any_token')
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
