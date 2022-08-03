@@ -30,7 +30,17 @@ export class AccountRepository implements AddAccountRepository, LoadAccountByEma
 
   async loadByToken (accessToken: string, role?: string): Promise<AccountModel> {
     const accountCollection = await mongoHelper.getCollection('accounts')
-    const account = await accountCollection.findOne({ accessToken })
+    let account
+    if (role === 'admin') {
+      account = await accountCollection.findOne({
+        accessToken
+      })
+    } else {
+      account = await accountCollection.findOne({
+        accessToken,
+        role
+      })
+    }
     if (!account) return null
     return mongoHelper.mapper(account)
   }
