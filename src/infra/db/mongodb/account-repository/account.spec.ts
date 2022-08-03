@@ -108,4 +108,20 @@ describe('Account MongoRepository', () => {
     expect(account.email).toBe('any_email@email.com')
     expect(account.password).toBe('any_password')
   })
+  test('Should call loadByToken and return null when invalid role is provided', async () => {
+    const newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      role: 'any_role'
+    })
+    const id = newAccount.insertedId
+    const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
+    await accountCollection.findOneAndUpdate(
+      { _id: id },
+      { $set: { accessToken } })
+    const sut = makeSut()
+    const account = await sut.loadByToken(accessToken, 'invalid_role')
+    expect(account).toBeNull()
+  })
 })
