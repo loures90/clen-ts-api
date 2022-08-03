@@ -69,11 +69,12 @@ describe('Account MongoRepository', () => {
     expect(accountWithToken).toBeTruthy()
     expect(accountWithToken.accessToken).toBe('any_token')
   })
-  test('Should call loadByToken and return an account on success without role', async () => {
+  test('Should call loadByToken and return an account on success with a valid role', async () => {
     const newAccount = await accountCollection.insertOne({
       name: 'any_name',
       email: 'any_email@email.com',
-      password: 'any_password'
+      password: 'any_password',
+      role: 'any_role'
     })
     const id = newAccount.insertedId
     const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
@@ -81,7 +82,7 @@ describe('Account MongoRepository', () => {
       { _id: id },
       { $set: { accessToken } })
     const sut = makeSut()
-    const account = await sut.loadByToken(accessToken)
+    const account = await sut.loadByToken(accessToken, 'any_role')
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
     expect(account.name).toBe('any_name')
@@ -93,7 +94,7 @@ describe('Account MongoRepository', () => {
       name: 'any_name',
       email: 'any_email@email.com',
       password: 'any_password',
-      role: 'any_role'
+      role: 'admin'
     })
     const id = newAccount.insertedId
     const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
@@ -107,6 +108,22 @@ describe('Account MongoRepository', () => {
     expect(account.name).toBe('any_name')
     expect(account.email).toBe('any_email@email.com')
     expect(account.password).toBe('any_password')
+  })
+  test('Should call loadByToken and return null when user is not admin and role are different', async () => {
+    const newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      role: 'any_role'
+    })
+    const id = newAccount.insertedId
+    const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
+    await accountCollection.findOneAndUpdate(
+      { _id: id },
+      { $set: { accessToken } })
+    const sut = makeSut()
+    const account = await sut.loadByToken(accessToken, 'admin')
+    expect(account).toBeNull()
   })
   test('Should call loadByToken and return null when invalid role is provided', async () => {
     const newAccount = await accountCollection.insertOne({
