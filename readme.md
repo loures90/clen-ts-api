@@ -1,3 +1,7 @@
+[![Build Status](https://app.travis-ci.com/loures90/clen-ts-api.svg?branch=master)](https://app.travis-ci.com/loures90/clen-ts-api)
+
+
+
 # Design Patterns:
 
 ## 1. Adapter:
