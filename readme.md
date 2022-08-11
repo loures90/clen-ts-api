@@ -1,6 +1,6 @@
 [![Build Status](https://app.travis-ci.com/loures90/clen-ts-api.svg?branch=master)](https://app.travis-ci.com/loures90/clen-ts-api)
 
-
+[![Coverage Status](https://coveralls.io/repos/github/loures90/clen-ts-api/badge.svg?branch=master)](https://coveralls.io/github/loures90/clen-ts-api?branch=master)
 
 # Design Patterns:
 
