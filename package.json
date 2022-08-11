@@ -16,7 +16,8 @@
     "test:unit": "npm test -- --watch -c jest-unit-config.ts",
     "test:integration": "npm test -- --watch -c jest-integration-config.ts",
     "test:staged": "jest --passWithNoTests --findRelatedTests",
-    "test:ci": "npm test -- --coverage"
+    "test:ci": "npm test -- --coverage",
+    "test:coveralls": "npm run test:ci && < coverage/lcov.info"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
     "@types/supertest": "^2.0.12",
     "@types/validator": "^13.7.3",
     "@typescript-eslint/eslint-plugin": "*",
+    "coveralls": "^3.1.1",
     "eslint": "*",
     "eslint-config-standard-with-typescript": "*",
     "eslint-plugin-import": "*",
