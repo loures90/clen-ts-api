@@ -64,4 +64,10 @@ describe('Survey MongoRepository', () => {
     expect(surveys[0].answers.length).toBe(2)
     expect(surveys[0].date).toBeTruthy()
   })
+  test('Should call LoadAll and return an empty list when no survey is found', async () => {
+    const sut = makeSut()
+    const surveys = await sut.loadAll()
+    expect(surveys).toBeTruthy()
+    expect(surveys.length).toBe(0)
+  })
 })
