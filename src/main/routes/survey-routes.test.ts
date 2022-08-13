@@ -89,4 +89,12 @@ describe('AddSurvey routes', () => {
         .expect(403)
     })
   })
+  describe('Get / surveys', () => {
+    test('Should return 403 if not token is provided', async () => {
+      await request(app)
+        .get('/api/surveys')
+        .send()
+        .expect(403)
+    })
+  })
 })
