@@ -43,4 +43,25 @@ describe('Survey MongoRepository', () => {
     expect(surveyResponse.question).toBe('any_question')
     expect(surveyResponse.answers.length).toBe(2)
   })
+
+  test('Should call LoadAll and return a list of surveys on success', async () => {
+    const sut = makeSut()
+    const surveyData = {
+      question: 'any_question',
+      answers: [{
+        image: 'any_answer',
+        answer: 'any_answer'
+      }, {
+        answer: 'other_answer'
+      }],
+      date: new Date()
+    }
+    await surveyCollection.insertOne(surveyData)
+    const surveys = await sut.loadAll()
+    expect(surveys).toBeTruthy()
+    expect(surveys[0].id).toBeTruthy()
+    expect(surveys[0].question).toBe('any_question')
+    expect(surveys[0].answers.length).toBe(2)
+    expect(surveys[0].date).toBeTruthy()
+  })
 })
