@@ -1,6 +1,7 @@
 export interface AddSurveyModel {
   question: string
   answers: AnswerModel[]
+  date: Date
 }
 
 export interface AnswerModel {
