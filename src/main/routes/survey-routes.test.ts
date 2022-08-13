@@ -5,13 +5,22 @@ import app from '../config/app'
 import jsonwebtoken from 'jsonwebtoken'
 import config from '../config/env'
 
-const makeFakeAccessToken = async (role: string): Promise<string> => {
-  const newAccount = await accountCollection.insertOne({
-    name: 'any_name',
-    email: 'any_email@email.com',
-    password: 'any_password',
-    role
-  })
+const makeFakeAccessToken = async (role?: string): Promise<string> => {
+  let newAccount
+  if (role === 'admin') {
+    newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      role
+    })
+  } else {
+    newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+  }
   const id = newAccount.insertedId
   const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
   await accountCollection.findOneAndUpdate(
@@ -95,6 +104,25 @@ describe('AddSurvey routes', () => {
         .get('/api/surveys')
         .send()
         .expect(403)
+    })
+    test('Should return 200 on success', async () => {
+      const surveyData = {
+        question: 'any_question',
+        answers: [{
+          image: 'any_answer',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }
+      await surveyCollection.insertOne(surveyData)
+      const accessToken = await makeFakeAccessToken()
+      await request(app)
+        .get('/api/surveys')
+        .set('x-access-token', accessToken)
+        .send()
+        .expect(200)
     })
   })
 })
