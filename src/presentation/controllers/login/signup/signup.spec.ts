@@ -30,7 +30,7 @@ const makeAddAccountStub = (): AddAccount => {
   return new AddAccountStub()
 }
 
-interface SutTypes {
+type SutTypes = {
   sut: SignupController
   addAccountStub: AddAccount
   validationStub: Validation

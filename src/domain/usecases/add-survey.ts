@@ -1,10 +1,10 @@
-export interface AddSurveyModel {
+export type AddSurveyModel = {
   question: string
   answers: AnswerModel[]
   date: Date
 }
 
-export interface AnswerModel {
+export type AnswerModel = {
   answer: string
   image?: string
 }

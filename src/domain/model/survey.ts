@@ -1,6 +1,6 @@
 import { AnswerModel } from '../usecases/add-survey'
 
-export interface SurveyModel {
+export type SurveyModel = {
   id: string
   question: string
   answers: AnswerModel[]
