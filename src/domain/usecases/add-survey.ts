@@ -1,8 +1,6 @@
-export type AddSurveyModel = {
-  question: string
-  answers: AnswerModel[]
-  date: Date
-}
+import { SurveyModel } from '../model/survey'
+
+export type AddSurveyModel = Omit<SurveyModel, 'id'>
 
 export type AnswerModel = {
   answer: string
