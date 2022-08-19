@@ -1,8 +1,6 @@
 import mockdate from 'mockdate'
 import { DBAddSurveyResult } from './db-add-survey-result'
-import { AddSurveyResultRepository } from '../../protocols/db/survey-result/add-survey-result-repository'
-import { AddSurveyResultModel } from '../../../domain/usecases/add-survey-result'
-import { SurveyResultModel } from '../../../domain/model/survey-result'
+import { SurveyResultModel, AddSurveyResultModel, AddSurveyResultRepository } from './db-add-survey-result-protocols'
 
 const makeAddFakeSurveyResult = (): AddSurveyResultModel => ({
   accountId: 'any_account_id',
