@@ -51,4 +51,9 @@ describe('DbAddSurvey', () => {
     await sut.add(surveyResultData)
     expect(addSpy).toHaveBeenCalledWith(makeFakeSurveyResult())
   })
+  test('Should return a SurveyResultModel on success', async () => {
+    const { sut } = makeSut()
+    const surveyResult = await sut.add(makeFakeSurveyResult())
+    expect(surveyResult).toEqual(makeFakeSurveyResult())
+  })
 })
