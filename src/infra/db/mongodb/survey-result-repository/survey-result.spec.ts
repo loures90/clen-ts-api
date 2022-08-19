@@ -66,4 +66,21 @@ describe('Survey MongoRepository', () => {
     expect(surveyResultResponse.answer).toBe('any_answer')
     expect(surveyResultResponse.date).toBeTruthy()
   })
+
+  test('Should call add and return a SurveyResult on success for a new result', async () => {
+    const surveyResultData = {
+      accountId: 'any_account_id',
+      surveyId: 'any_survey_id',
+      answer: 'any_answer',
+      date: new Date()
+    }
+    const sut = makeSut()
+    const surveyResultResponse = await sut.add(surveyResultData)
+    expect(surveyResultResponse).toBeTruthy()
+    expect(surveyResultResponse.id).toBeTruthy()
+    expect(surveyResultResponse.surveyId).toBe('any_survey_id')
+    expect(surveyResultResponse.accountId).toBe('any_account_id')
+    expect(surveyResultResponse.answer).toBe('any_answer')
+    expect(surveyResultResponse.date).toBeTruthy()
+  })
 })
