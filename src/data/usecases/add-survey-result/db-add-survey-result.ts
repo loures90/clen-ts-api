@@ -5,7 +5,7 @@ import { AddSurveyResultRepository } from '../../protocols/db/survey-result/add-
 export class DBAddSurveyResult implements AddSurveyResult {
   constructor (private readonly addSurveyResultRepository: AddSurveyResultRepository) { }
   async add (data: AddSurveyResultModel): Promise<SurveyResultModel> {
-    await this.addSurveyResultRepository.add(data)
-    return null
+    const surveyResult = await this.addSurveyResultRepository.add(data)
+    return surveyResult
   }
 }
