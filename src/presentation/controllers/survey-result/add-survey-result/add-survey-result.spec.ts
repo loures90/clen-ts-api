@@ -1,7 +1,5 @@
 import { AddSurveyResultController } from './add-survey-result'
-import { LoadSurveyById, SurveyModel, HttpRequest } from './protocols'
-import { forbidden } from '../../../helpers/http/http-helpers'
-import { InvalidParamError } from '../../../errors/invalid-param-error'
+import { LoadSurveyById, SurveyModel, HttpRequest, forbidden, serverError, InvalidParamError } from './protocols'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -62,5 +60,13 @@ describe('AddSurveyResltController', () => {
     jest.spyOn(loadSurveyByIdStub, 'loadById').mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('survey_id')))
+  })
+  test('should throw when LoadSurveyById throws', async () => {
+    const { sut, loadSurveyByIdStub } = makeSut()
+    jest.spyOn(loadSurveyByIdStub, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
