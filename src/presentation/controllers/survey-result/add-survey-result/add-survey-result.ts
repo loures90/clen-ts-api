@@ -1,5 +1,5 @@
 import { InvalidParamError } from '../../../errors'
-import { LoadSurveyById, Controller, HttpRequest, HttpResponse, forbidden, serverError, AddSurveyResult } from './protocols'
+import { LoadSurveyById, Controller, HttpRequest, HttpResponse, forbidden, serverError, AddSurveyResult, AddSurveyResultModel } from './protocols'
 
 export class AddSurveyResultController implements Controller {
   constructor (
@@ -14,6 +14,13 @@ export class AddSurveyResultController implements Controller {
         if (!answerIsValid.length) {
           return forbidden(new InvalidParamError('answer'))
         }
+        const inputSurveyResult: AddSurveyResultModel = {
+          accountId: httpRequest.account_id,
+          surveyId: httpRequest.params.survey_id,
+          answer: httpRequest.body.answer,
+          date: new Date()
+        }
+        await this.addSurveyResult.add(inputSurveyResult)
       } else {
         return forbidden(new InvalidParamError('survey_id'))
       }
