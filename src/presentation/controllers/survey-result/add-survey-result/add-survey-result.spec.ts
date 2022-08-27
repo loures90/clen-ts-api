@@ -111,15 +111,15 @@ describe('AddSurveyResltController', () => {
     })
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('answer')))
   })
-  // test('Should call addSurveyResult with correct values', async () => {
-  //   const { sut, addSurveyResultStub } = makeSut()
-  //   const addSpy = jest.spyOn(addSurveyResultStub, 'add')
-  //   await sut.handle(makeFakeRequest())
-  //   expect(addSpy).toHaveBeenCalledWith({
-  //     accountId: 'any_account_id',
-  //     surveyId: 'any_answer_id',
-  //     answer: 'any_answer',
-  //     date: new Date()
-  //   })
-  // })
+  test('Should call addSurveyResult with correct values', async () => {
+    const { sut, addSurveyResultStub } = makeSut()
+    const addSpy = jest.spyOn(addSurveyResultStub, 'add')
+    await sut.handle(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalledWith({
+      accountId: 'any_account_id',
+      surveyId: 'any_survey_id',
+      answer: 'any_answer',
+      date: new Date()
+    })
+  })
 })
