@@ -1,12 +1,12 @@
 import { AddSurveyResultController } from './add-survey-result'
-import { LoadSurveyById, SurveyModel, HttpRequest, forbidden, serverError, InvalidParamError } from './protocols'
+import { LoadSurveyById, SurveyModel, HttpRequest, forbidden, serverError, InvalidParamError, AddSurveyResult } from './protocols'
+import mockdate from 'mockdate'
+import { SurveyResultModel } from '../../../../domain/model/survey-result'
+import { AddSurveyResultModel } from '../../../../domain/usecases/add-survey-result'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    answer: {
-      image: 'any_image',
-      answer: 'any_answer'
-    }
+    answer: 'any_answer'
   },
   params: {
     survey_id: 'any_survey_id'
@@ -25,6 +25,15 @@ const makeFakeSurvey = (): SurveyModel => (
     date: new Date()
   })
 
+const makeFakeSurveyResult = (): SurveyResultModel => (
+  {
+    id: 'any_id',
+    surveyId: 'any_survey_id',
+    accountId: 'any_account_id',
+    answer: 'any_answer',
+    date: new Date()
+  })
+
 const makeLoadSurveyById = (): LoadSurveyById => {
   class LoadSurveyByIdStub implements LoadSurveyById {
     async loadById (id: string): Promise<SurveyModel> {
@@ -34,21 +43,41 @@ const makeLoadSurveyById = (): LoadSurveyById => {
   return new LoadSurveyByIdStub()
 }
 
+const makeAddSurveyResult = (): AddSurveyResult => {
+  class AddSurveyResultStub implements AddSurveyResult {
+    async add (data: AddSurveyResultModel): Promise<SurveyResultModel> {
+      return await new Promise(resolve => resolve(makeFakeSurveyResult()))
+    }
+  }
+  return new AddSurveyResultStub()
+}
+
 type SutTypes = {
   sut: AddSurveyResultController
   loadSurveyByIdStub: LoadSurveyById
+  addSurveyResultStub: AddSurveyResult
 }
 
 const makeSut = (): SutTypes => {
+  const addSurveyResultStub = makeAddSurveyResult()
   const loadSurveyByIdStub = makeLoadSurveyById()
-  const sut = new AddSurveyResultController(loadSurveyByIdStub)
+  const sut = new AddSurveyResultController(loadSurveyByIdStub, addSurveyResultStub)
   return {
     sut,
-    loadSurveyByIdStub
+    loadSurveyByIdStub,
+    addSurveyResultStub
   }
 }
 
 describe('AddSurveyResltController', () => {
+  beforeAll(() => {
+    mockdate.set(new Date())
+  })
+
+  afterAll(() => {
+    mockdate.reset()
+  })
+
   test('Should call LoadSurveyById with correct id', async () => {
     const { sut, loadSurveyByIdStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadSurveyByIdStub, 'loadById')
@@ -69,14 +98,11 @@ describe('AddSurveyResltController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
-  test('should return 403 if anwer is not valide', async () => {
+  test('should return 403 if answer is not valide', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({
       body: {
-        answer: {
-          image: 'other_image',
-          answer: 'other_answer'
-        }
+        answer: 'other_answer'
       },
       params: {
         survey_id: 'other_survey_id'
@@ -85,4 +111,15 @@ describe('AddSurveyResltController', () => {
     })
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('answer')))
   })
+  // test('Should call addSurveyResult with correct values', async () => {
+  //   const { sut, addSurveyResultStub } = makeSut()
+  //   const addSpy = jest.spyOn(addSurveyResultStub, 'add')
+  //   await sut.handle(makeFakeRequest())
+  //   expect(addSpy).toHaveBeenCalledWith({
+  //     accountId: 'any_account_id',
+  //     surveyId: 'any_answer_id',
+  //     answer: 'any_answer',
+  //     date: new Date()
+  //   })
+  // })
 })
