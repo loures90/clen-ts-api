@@ -6,7 +6,7 @@ import { AddAccountParams } from '../../domain/usecases/add-account'
 import { AddAccountRepository } from '../protocols/db/account/add-account-repository'
 import { mockAccount } from './mock-account'
 
-export const makeAddAccountRepository = (): AddAccountRepository => {
+export const mockAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
     async add (accountData: AddAccountParams): Promise<AccountModel> {
       const fakeAccount: AccountModel = mockAccount()
@@ -16,7 +16,7 @@ export const makeAddAccountRepository = (): AddAccountRepository => {
   return new AddAccountRepositoryStub()
 }
 
-export const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
+export const mockLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
     async loadByEmail (email: string): Promise<AccountModel> {
       return {
@@ -30,7 +30,7 @@ export const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository
   return new LoadAccountByEmailRepositoryStub()
 }
 
-export const makeLoadAccountByTokenRepository = (): LoadAccountByTokenRepository => {
+export const mockLoadAccountByTokenRepository = (): LoadAccountByTokenRepository => {
   class LoadAccountByTokenRepositoryStub implements LoadAccountByTokenRepository {
     async loadByToken (token: string, role?: string): Promise<AccountModel> {
       return await new Promise(resolve => resolve(mockAccount()))
@@ -39,7 +39,7 @@ export const makeLoadAccountByTokenRepository = (): LoadAccountByTokenRepository
   return new LoadAccountByTokenRepositoryStub()
 }
 
-export const makeUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
+export const mockUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
   class UpdateAccessTokenRepositoryStubStub implements UpdateAccessTokenRepository {
     async updateAccessToken (id: string, accessToken: string): Promise<void> {
       return await new Promise(resolve => resolve(null))

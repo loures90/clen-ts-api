@@ -1,7 +1,7 @@
 import mockdate from 'mockdate'
 import { DBAddSurveyResult } from './db-add-survey-result'
 import { AddSurveyResultParams, AddSurveyResultRepository } from './db-add-survey-result-protocols'
-import { mockSurveyResult, mockAddSurveyResult, makeAddSurveyResultRepository } from '../../../test'
+import { mockSurveyResult, mockAddSurveyResult, mockAddSurveyResultRepository } from '../../../test'
 
 type SutTypes = {
   sut: DBAddSurveyResult
@@ -9,7 +9,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const addSurveyResultRepositoryStub = makeAddSurveyResultRepository()
+  const addSurveyResultRepositoryStub = mockAddSurveyResultRepository()
   const sut = new DBAddSurveyResult(addSurveyResultRepositoryStub)
   return {
     sut,

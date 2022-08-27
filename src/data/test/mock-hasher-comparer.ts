@@ -1,7 +1,7 @@
 import { Hasher } from '../protocols/criptography/hasher'
 import { HashComparer } from '../protocols/criptography/hash-comparer'
 
-export const makeHashComparer = (): HashComparer => {
+export const mockHashComparer = (): HashComparer => {
   class HashComparerStub implements HashComparer {
     async compare (value: string, hash: string): Promise<boolean> {
       return await new Promise(resolve => resolve(true))
@@ -10,7 +10,7 @@ export const makeHashComparer = (): HashComparer => {
   return new HashComparerStub()
 }
 
-export const makeHasher = (): Hasher => {
+export const mockHasher = (): Hasher => {
   class HasherStub implements Hasher {
     async hash (value: string): Promise<string> {
       return 'hashed_password'

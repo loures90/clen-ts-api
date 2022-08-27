@@ -1,4 +1,4 @@
-import { makeEncrypter, makeHashComparer, makeLoadAccountByEmailRepository, makeUpdateAccessTokenRepository, mockAuthentication } from '../../../test'
+import { mockEncrypter, mockHashComparer, mockLoadAccountByEmailRepository, mockUpdateAccessTokenRepository, mockAuthentication } from '../../../test'
 import { DbAuthenticator } from './db-authenticator'
 import {
   HashComparer,
@@ -16,10 +16,10 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
-  const encrypterStub = makeEncrypter()
-  const hashComparerStub = makeHashComparer()
-  const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
+  const updateAccessTokenRepositoryStub = mockUpdateAccessTokenRepository()
+  const encrypterStub = mockEncrypter()
+  const hashComparerStub = mockHashComparer()
+  const loadAccountByEmailRepositoryStub = mockLoadAccountByEmailRepository()
   const sut = new DbAuthenticator(loadAccountByEmailRepositoryStub, hashComparerStub, encrypterStub, updateAccessTokenRepositoryStub)
   return {
     sut,
