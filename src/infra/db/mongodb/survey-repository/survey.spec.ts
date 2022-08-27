@@ -1,5 +1,5 @@
 import { SurveyRepository } from './survey'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import mongoHelper from '../helpers/mongo-helper'
 import mockdate from 'mockdate'
 
@@ -95,6 +95,13 @@ describe('Survey MongoRepository', () => {
       expect(surveyResponse.id).toBeTruthy()
       expect(surveyResponse.question).toBe('any_question')
       expect(surveyResponse.answers.length).toBe(2)
+    })
+    test('Should call LoadById and return null if survey is not found', async () => {
+      const sut = makeSut()
+      const id = new ObjectId('507f191e810c19729de860ea').toString()
+      const surveyResponse = await sut.loadById(id)
+
+      expect(surveyResponse).toBeNull()
     })
   })
 })
