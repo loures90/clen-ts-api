@@ -66,7 +66,23 @@ describe('AddSurveyResltController', () => {
     jest.spyOn(loadSurveyByIdStub, 'loadById').mockImplementationOnce(() => {
       throw new Error()
     })
-    const httpResponse = await sut.handle({})
+    const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('should return 403 if anwer is not valide', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        answer: {
+          image: 'other_image',
+          answer: 'other_answer'
+        }
+      },
+      params: {
+        survey_id: 'other_survey_id'
+      },
+      account_id: 'other_account_id'
+    })
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('answer')))
   })
 })
