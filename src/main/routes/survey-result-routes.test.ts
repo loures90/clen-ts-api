@@ -6,7 +6,7 @@ import app from '../config/app'
 import jsonwebtoken from 'jsonwebtoken'
 import config from '../config/env'
 
-const makeFakeAccessToken = async (role?: string): Promise<string> => {
+const makeFakeAccessToken = async (role?: string): Promise<any> => {
   let newAccount
   if (role === 'admin') {
     newAccount = await accountCollection.insertOne({
@@ -27,7 +27,7 @@ const makeFakeAccessToken = async (role?: string): Promise<string> => {
   await accountCollection.findOneAndUpdate(
     { _id: id },
     { $set: { accessToken } })
-  return accessToken
+  return { accessToken, id }
 }
 
 let surveyResultCollection: Collection
@@ -60,7 +60,7 @@ describe('SurveyResult routes', () => {
         .expect(403)
     })
     test('Should return 200 when it creates a new survey result', async () => {
-      const accessToken = await makeFakeAccessToken('not_admin')
+      const { accessToken } = await makeFakeAccessToken('not_admin')
       const surveyData = {
         question: 'any_question',
         answers: [{
@@ -78,6 +78,36 @@ describe('SurveyResult routes', () => {
         .set('x-access-token', accessToken)
         .send({
           answer: 'any_answer'
+        })
+        .expect(200)
+    })
+    test('Should return 200 when it update a survey result', async () => {
+      const { accessToken, id } = await makeFakeAccessToken('not_admin')
+      const surveyData = {
+        question: 'any_question',
+        answers: [{
+          image: 'any_answer',
+          answer: 'any_answer'
+        }, {
+          answer: 'other_answer'
+        }],
+        date: new Date()
+      }
+      await surveyCollection.insertOne(surveyData)
+      const survey = mongoHelper.mapper(surveyData)
+
+      const surveyResultData = {
+        surveyId: survey.id,
+        answer: 'any_answer',
+        accountId: id,
+        date: new Date()
+      }
+      await surveyResultCollection.insertOne(surveyResultData)
+      await request(app)
+        .put(`/api/surveys/${survey.id}/results`)
+        .set('x-access-token', accessToken)
+        .send({
+          answer: 'other_answer'
         })
         .expect(200)
     })
