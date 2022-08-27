@@ -1,8 +1,36 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Collection } from 'mongodb'
 import request from 'supertest'
 import mongoHelper from '../../infra/db/mongodb/helpers/mongo-helper'
 import app from '../config/app'
+import jsonwebtoken from 'jsonwebtoken'
+import config from '../config/env'
 
+const makeFakeAccessToken = async (role?: string): Promise<string> => {
+  let newAccount
+  if (role === 'admin') {
+    newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      role
+    })
+  } else {
+    newAccount = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+  }
+  const id = newAccount.insertedId
+  const accessToken = await jsonwebtoken.sign({ id }, config.jwtSecret)
+  await accountCollection.findOneAndUpdate(
+    { _id: id },
+    { $set: { accessToken } })
+  return accessToken
+}
+
+let surveyResultCollection: Collection
 let surveyCollection: Collection
 let accountCollection: Collection
 describe('SurveyResult routes', () => {
@@ -10,10 +38,12 @@ describe('SurveyResult routes', () => {
     await mongoHelper.connect(process.env.MONGO_URL)
   })
   beforeEach(async () => {
+    surveyResultCollection = await mongoHelper.getCollection('surveyResults')
     surveyCollection = await mongoHelper.getCollection('surveys')
     accountCollection = await mongoHelper.getCollection('accounts')
   })
   afterEach(async () => {
+    await surveyResultCollection.deleteMany({})
     await surveyCollection.deleteMany({})
     await accountCollection.deleteMany({})
   })
@@ -28,6 +58,28 @@ describe('SurveyResult routes', () => {
           answer: 'any_answer'
         })
         .expect(403)
+    })
+    test('Should return 200 when it creates a new survey result', async () => {
+      const accessToken = await makeFakeAccessToken('not_admin')
+      const surveyData = {
+        question: 'any_question',
+        answers: [{
+          image: 'any_answer',
+          answer: 'any_answer'
+        }, {
+          answer: 'any_answer'
+        }],
+        date: new Date()
+      }
+      await surveyCollection.insertOne(surveyData)
+      const survey = mongoHelper.mapper(surveyData)
+      await request(app)
+        .put(`/api/surveys/${survey.id}/results`)
+        .set('x-access-token', accessToken)
+        .send({
+          answer: 'any_answer'
+        })
+        .expect(200)
     })
   })
 })
