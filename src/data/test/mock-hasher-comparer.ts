@@ -1,3 +1,4 @@
+import { Hasher } from '../protocols/criptography/hasher'
 import { HashComparer } from '../protocols/criptography/hash-comparer'
 
 export const makeHashComparer = (): HashComparer => {
@@ -7,4 +8,13 @@ export const makeHashComparer = (): HashComparer => {
     }
   }
   return new HashComparerStub()
+}
+
+export const makeHasher = (): Hasher => {
+  class HasherStub implements Hasher {
+    async hash (value: string): Promise<string> {
+      return 'hashed_password'
+    }
+  }
+  return new HasherStub()
 }
