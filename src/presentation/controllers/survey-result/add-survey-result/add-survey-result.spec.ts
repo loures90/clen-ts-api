@@ -122,4 +122,12 @@ describe('AddSurveyResltController', () => {
       date: new Date()
     })
   })
+  test('should throw when LoadSurveyById throws', async () => {
+    const { sut, addSurveyResultStub } = makeSut()
+    jest.spyOn(addSurveyResultStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
