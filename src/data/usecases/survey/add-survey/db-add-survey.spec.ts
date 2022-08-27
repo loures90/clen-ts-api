@@ -1,4 +1,4 @@
-import { AddSurveyRepository, AddSurvey, AddSurveyModel } from './db-add-survey-protocols'
+import { AddSurveyRepository, AddSurvey, AddSurveyParams } from './db-add-survey-protocols'
 import { DbAddSurvey } from './db-add-survey'
 import mockdate from 'mockdate'
 import { mockAddSurveyRepository } from '../../../test'
@@ -17,7 +17,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const mockSurveyData = (): AddSurveyModel => ({
+const mockSurveyData = (): AddSurveyParams => ({
   question: 'any_question',
   answers: [{
     image: 'any_answer',
@@ -37,7 +37,7 @@ describe('DbAddSurvey', () => {
   test('Should call AddSurveyRepository with correct values', async () => {
     const { sut, addSurveyRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addSurveyRepositoryStub, 'add')
-    const surveyData: AddSurveyModel = mockSurveyData()
+    const surveyData: AddSurveyParams = mockSurveyData()
     await sut.add(surveyData)
     expect(addSpy).toHaveBeenCalledWith(surveyData)
   })
@@ -51,7 +51,7 @@ describe('DbAddSurvey', () => {
   })
   test('Should return null on success', async () => {
     const { sut } = makeSut()
-    const surveyData: AddSurveyModel = mockSurveyData()
+    const surveyData: AddSurveyParams = mockSurveyData()
     const response = await sut.add(surveyData)
     expect(response).toBeNull()
   })

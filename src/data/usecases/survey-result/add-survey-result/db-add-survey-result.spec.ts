@@ -1,6 +1,6 @@
 import mockdate from 'mockdate'
 import { DBAddSurveyResult } from './db-add-survey-result'
-import { AddSurveyResultModel, AddSurveyResultRepository } from './db-add-survey-result-protocols'
+import { AddSurveyResultParams, AddSurveyResultRepository } from './db-add-survey-result-protocols'
 import { mockSurveyResult, mockAddSurveyResult, makeAddSurveyResultRepository } from '../../../test'
 
 type SutTypes = {
@@ -28,7 +28,7 @@ describe('DbAddSurvey', () => {
   test('Should call AddSurveyResultRepository with correct values', async () => {
     const { sut, addSurveyResultRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addSurveyResultRepositoryStub, 'add')
-    const surveyResultData: AddSurveyResultModel = mockAddSurveyResult()
+    const surveyResultData: AddSurveyResultParams = mockAddSurveyResult()
     await sut.add(surveyResultData)
     expect(addSpy).toHaveBeenCalledWith(mockAddSurveyResult())
   })

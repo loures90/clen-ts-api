@@ -1,8 +1,8 @@
-import { AddSurvey, AddSurveyModel } from '../../domain/usecases/add-survey'
+import { AddSurvey, AddSurveyParams } from '../../domain/usecases/add-survey'
 
 export const mockAddSurvey = (): AddSurvey => {
   class AddSurveyStub implements AddSurvey {
-    async add (data: AddSurveyModel): Promise<void> {
+    async add (data: AddSurveyParams): Promise<void> {
       return await new Promise(resolve => resolve())
     }
   }

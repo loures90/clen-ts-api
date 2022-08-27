@@ -1,7 +1,7 @@
 import { SurveyResultModel } from '../model/survey-result'
 
-export type AddSurveyResultModel = Omit<SurveyResultModel, 'id'>
+export type AddSurveyResultParams = Omit<SurveyResultModel, 'id'>
 
 export interface AddSurveyResult {
-  add (data: AddSurveyResultModel): Promise<SurveyResultModel>
+  add (data: AddSurveyResultParams): Promise<SurveyResultModel>
 }

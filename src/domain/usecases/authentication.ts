@@ -1,7 +1,7 @@
 import { AccountModel } from '../model/account'
 
-export type AuthenticationModel = Omit<AccountModel, 'id' | 'name'>
+export type AuthenticationParams = Omit<AccountModel, 'id' | 'name'>
 
 export interface Authenticator {
-  auth (authentication: AuthenticationModel): Promise<string>
+  auth (authentication: AuthenticationParams): Promise<string>
 }
