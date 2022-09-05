@@ -1,5 +1,6 @@
 import { loginPath } from './paths'
-import { accountSchema, loginParamsSchema } from './schemas'
+import { accountSchema, loginParamsSchema, errorSchema } from './schemas'
+import { badRequest, serverError, unauthorized, notFound } from './components'
 
 export default {
   openapi: '3.0.0',
@@ -7,6 +8,10 @@ export default {
     title: 'Api de Enquetes para programadores',
     description: 'Curso Manguinho',
     version: '1.0.0'
+  },
+  license: {
+    name: '',
+    url: ''
   },
   servers: [{
     url: '/api'
@@ -19,6 +24,13 @@ export default {
   },
   schemas: {
     account: accountSchema,
-    loginParams: loginParamsSchema
+    loginParams: loginParamsSchema,
+    error: errorSchema
+  },
+  components: {
+    badRequest,
+    serverError,
+    unauthorized,
+    notFound
   }
 }
