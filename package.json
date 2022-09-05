@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node ./dist/main/server.js",
+    "dev": "nodemon --watch 'src/' --exec 'ts-node ./dist/main/server.js' -e ts",
     "build": "rimraf dist && tsc",
     "up": "npm run build && sudo docker-compose up -d",
     "down": "sudo docker-compose down",
@@ -44,6 +45,7 @@
     "jest": "^28.1.1",
     "lint-staged": "^13.0.1",
     "mockdate": "^3.0.5",
+    "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
     "supertest": "^6.2.3",
     "ts-jest": "^28.0.5",
