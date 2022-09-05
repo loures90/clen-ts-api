@@ -6,6 +6,6 @@ import { adminAuth } from '../middlewares/admin-auth-middleware'
 import { auth } from '../middlewares/auth-middleware'
 
 export default (router: Router): void => {
-  router.post('/survey', adminAuth, adaptRoute(makeAddSurveyController()))
+  router.post('/surveys', adminAuth, adaptRoute(makeAddSurveyController()))
   router.get('/surveys', auth, adaptRoute(makeLoadSurveysController()))
 }

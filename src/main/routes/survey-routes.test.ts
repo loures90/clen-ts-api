@@ -50,7 +50,7 @@ describe('AddSurvey routes', () => {
     test('Should return 204 on success to admin user', async () => {
       const accessToken = await makeFakeAccessToken('admin')
       await request(app)
-        .post('/api/survey')
+        .post('/api/surveys')
         .set('x-access-token', accessToken)
         .send({
           question: 'any_question',
@@ -68,7 +68,7 @@ describe('AddSurvey routes', () => {
     test('Should return 403 for not admin role', async () => {
       const accessToken = await makeFakeAccessToken('not_admin')
       await request(app)
-        .post('/api/survey')
+        .post('/api/surveys')
         .set('x-access-token', accessToken)
         .send({
           question: 'any_question',
@@ -84,7 +84,7 @@ describe('AddSurvey routes', () => {
     })
     test('Should return 403 when no headers is provided', async () => {
       await request(app)
-        .post('/api/survey')
+        .post('/api/surveys')
         .send({
           question: 'any_question',
           answers: [{
