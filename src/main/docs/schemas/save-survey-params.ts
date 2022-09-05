@@ -1,0 +1,9 @@
+export const saveSurveyResultParams = {
+  type: 'object',
+  properties: {
+    answer: {
+      type: 'string'
+    }
+  },
+  required: ['answer']
+}
