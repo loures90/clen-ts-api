@@ -50,6 +50,7 @@ describe('SurveyResult routes', () => {
   afterAll(async () => {
     await mongoHelper.disconnect()
   })
+
   describe('Put /api/surveys/{any_survey_id}/results', () => {
     test('Should return 403 without access token', async () => {
       await request(app)
@@ -103,13 +104,15 @@ describe('SurveyResult routes', () => {
         date: new Date()
       }
       await surveyResultCollection.insertOne(surveyResultData)
-      await request(app)
+      const res = await request(app)
         .put(`/api/surveys/${survey.id}/results`)
         .set('x-access-token', accessToken)
         .send({
           answer: 'other_answer'
         })
         .expect(200)
+      expect(res.body.accountId).toEqual(id.toString())
+      expect(res.body.answer).toEqual('other_answer')
     })
   })
 })
