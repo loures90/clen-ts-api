@@ -2,7 +2,6 @@ import schemas from './schemas-container'
 import { badRequest, serverError, unauthorized, notFound, forbidden } from './components'
 
 export default {
-  components: {
     securitySchemes: {
       apiKeyAuth: schemas.apiKeyAuthSchema
     },
@@ -11,5 +10,4 @@ export default {
     unauthorized,
     notFound,
     forbidden
-  }
 }
