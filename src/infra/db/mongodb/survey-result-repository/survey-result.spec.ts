@@ -56,7 +56,7 @@ describe('Survey MongoRepository', () => {
   const makeSut = (): SurveyResultRepository => {
     return new SurveyResultRepository()
   }
-  test('Should call add and return a SurveyResult on success', async () => {
+  test('Should call add and save a SurveyResult on success', async () => {
     const survey = await makeSurvey()
     const account = await makeAccount()
 
@@ -67,7 +67,8 @@ describe('Survey MongoRepository', () => {
       date: new Date()
     }
     const sut = makeSut()
-    const surveyResultResponse = await sut.add(surveyResultData)
+    await sut.add(surveyResultData)
+    const surveyResultResponse = await sut.loadBySurveyId(survey.id)
     expect(surveyResultResponse).toBeTruthy()
     expect(surveyResultResponse.surveyId.toString()).toBe(survey.id)
     expect(surveyResultResponse.question).toBe('any_question')
@@ -99,7 +100,8 @@ describe('Survey MongoRepository', () => {
       date: new Date()
     }
     const sut = makeSut()
-    const surveyResultResponse = await sut.add(surveyResultData)
+    await sut.add(surveyResultData)
+    const surveyResultResponse = await sut.loadBySurveyId(survey.id)
     expect(surveyResultResponse).toBeTruthy()
     expect(surveyResultResponse.surveyId.toString()).toBe(survey.id)
     expect(surveyResultResponse.question).toBe('any_question')

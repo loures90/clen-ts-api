@@ -6,9 +6,7 @@ import { mockSurveyResult } from './mock-survey-result'
 
 export const mockAddSurveyResultRepository = (): AddSurveyResultRepository => {
   class AddSurveyResultRepositoryStub implements AddSurveyResultRepository {
-    async add (data: AddSurveyResultParams): Promise<SurveyResultModel> {
-      return await new Promise(resolve => resolve(mockSurveyResult()))
-    }
+    async add (data: AddSurveyResultParams): Promise<void> { }
   }
   return new AddSurveyResultRepositoryStub()
 }

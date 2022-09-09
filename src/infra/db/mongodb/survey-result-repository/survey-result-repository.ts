@@ -1,15 +1,14 @@
 import { ObjectId } from 'mongodb'
 import { AddSurveyResultRepository } from '../../../../data/protocols/db/survey-result/add-survey-result-repository'
 import { LoadSurveyResultRepository } from '../../../../data/protocols/db/survey-result/load-survey-result-repository'
-import { SurveyResultModel } from '../../../../domain/model/survey-result'
 import { AddSurveyResultParams } from '../../../../domain/usecases/add-survey-result'
 import { mongoHelper, QueryBuilder } from '../helpers'
 
 export class SurveyResultRepository implements AddSurveyResultRepository, LoadSurveyResultRepository {
-  async add (data: AddSurveyResultParams): Promise<SurveyResultModel> {
+  async add (data: AddSurveyResultParams): Promise<void> {
     const surveyResultData = { ...data }
     const surveyResultCollection = await mongoHelper.getCollection('survey-results')
-    const result = await surveyResultCollection.findOneAndUpdate({
+    await surveyResultCollection.findOneAndUpdate({
       accountId: new ObjectId(surveyResultData.accountId),
       surveyId: new ObjectId(surveyResultData.surveyId)
     }, {
@@ -21,9 +20,6 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
       upsert: true,
       returnDocument: 'after'
     })
-    mongoHelper.mapper(result.value)
-    const surveyResult = await this.loadBySurveyId(data.surveyId)
-    return surveyResult
   }
 
   async loadBySurveyId (surveyId: string): Promise<any> {
