@@ -3,7 +3,7 @@ import { LoadSurveyByIdRepository } from '../../../../data/protocols/db/surveys/
 import { LoadSurveysRepository } from '../../../../data/protocols/db/surveys/load-surveys-repository'
 import { AddSurveyParams, AddSurveyRepository } from '../../../../data/usecases/survey/add-survey/db-add-survey-protocols'
 import { SurveyModel } from '../../../../domain/model/survey'
-import mongoHelper from '../helpers/mongo-helper'
+import { mongoHelper } from '../helpers/mongo-helper'
 
 export class SurveyRepository implements AddSurveyRepository, LoadSurveysRepository, LoadSurveyByIdRepository {
   async add (surveyData: AddSurveyParams): Promise<void> {

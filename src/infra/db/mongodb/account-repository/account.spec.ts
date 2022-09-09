@@ -1,5 +1,5 @@
 import { Collection, ObjectId } from 'mongodb'
-import mongoHelper from '../helpers/mongo-helper'
+import { mongoHelper } from '../helpers'
 import { AccountRepository } from './account'
 import jsonwebtoken from 'jsonwebtoken'
 import config from '../../../../main/config/env'

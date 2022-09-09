@@ -1,6 +1,6 @@
 import { Collection, MongoClient } from 'mongodb'
 
-export default {
+export const mongoHelper = {
   client: null as MongoClient,
   uri: null as string,
 

@@ -1,7 +1,7 @@
-import MongoHelper from './mongo-helper'
+import { mongoHelper } from './mongo-helper'
 
 describe('Mongo Helper', () => {
-  const sut = MongoHelper
+  const sut = mongoHelper
   beforeAll(async () => {
     await sut.connect(process.env.MONGO_URL)
   })

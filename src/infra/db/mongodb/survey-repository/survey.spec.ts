@@ -1,6 +1,6 @@
 import { SurveyRepository } from './survey'
 import { Collection, ObjectId } from 'mongodb'
-import mongoHelper from '../helpers/mongo-helper'
+import { mongoHelper } from '../helpers'
 import mockdate from 'mockdate'
 
 describe('Survey MongoRepository', () => {
