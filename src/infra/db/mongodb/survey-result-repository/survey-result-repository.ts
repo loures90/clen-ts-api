@@ -1,10 +1,11 @@
 import { ObjectId } from 'mongodb'
 import { AddSurveyResultRepository } from '../../../../data/protocols/db/survey-result/add-survey-result-repository'
+import { LoadSurveyResultRepository } from '../../../../data/protocols/db/survey-result/load-survey-result-repository'
 import { SurveyResultModel } from '../../../../domain/model/survey-result'
 import { AddSurveyResultParams } from '../../../../domain/usecases/add-survey-result'
 import { mongoHelper, QueryBuilder } from '../helpers'
 
-export class SurveyResultRepository implements AddSurveyResultRepository {
+export class SurveyResultRepository implements AddSurveyResultRepository, LoadSurveyResultRepository {
   async add (data: AddSurveyResultParams): Promise<SurveyResultModel> {
     const surveyResultData = { ...data }
     const surveyResultCollection = await mongoHelper.getCollection('survey-results')
@@ -25,7 +26,7 @@ export class SurveyResultRepository implements AddSurveyResultRepository {
     return surveyResult
   }
 
-  private async loadBySurveyId (surveyId: string): Promise<any> {
+  async loadBySurveyId (surveyId: string): Promise<any> {
     const surveyResultCollection = await mongoHelper.getCollection('survey-results')
     const query = new QueryBuilder()
       .match({
