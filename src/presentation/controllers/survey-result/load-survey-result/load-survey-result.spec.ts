@@ -1,18 +1,7 @@
 import mockdate from 'mockdate'
 import { LoadSurveyResultController } from './load-survey-result'
-import { mockLoadSurveyById } from '../../../test'
-import { HttpRequest, LoadSurveyById, forbidden, serverError, InvalidParamError, LoadSurveyResult } from './protocols'
-import { SurveyResultModel } from '../../../../domain/model/survey-result'
-import { mockSurveyResult } from '../../../../data/test'
-
-const mockLoadSurveyResult = (): LoadSurveyResult => {
-  class LoadSurveyResultStub implements LoadSurveyResult {
-    async load (surveyId: string): Promise<SurveyResultModel> {
-      return await new Promise(resolve => resolve(mockSurveyResult()))
-    }
-  }
-  return new LoadSurveyResultStub()
-}
+import { mockLoadSurveyById, mockLoadSurveyResult, mockSurveyResult } from '../../../test'
+import { HttpRequest, LoadSurveyById, forbidden, serverError, InvalidParamError, LoadSurveyResult, ok } from './protocols'
 
 const mockRequest = (): HttpRequest => ({
   params: {
@@ -74,5 +63,11 @@ describe('LoadSurveyResultController', () => {
     const loadSpy = jest.spyOn(loadSurveyResultStub, 'load')
     await sut.handle(mockRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_survey_id')
+  })
+
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(ok(mockSurveyResult()))
   })
 })
