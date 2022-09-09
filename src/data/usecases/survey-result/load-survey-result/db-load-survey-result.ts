@@ -12,6 +12,6 @@ export class DbLoadSurveyResult implements LoadSurveyResult {
     if (!surveyResult) {
       await this.loadSurveyByIdRepository.loadById(surveyId)
     }
-    return await new Promise(resolve => resolve(null))
+    return surveyResult
   }
 }
