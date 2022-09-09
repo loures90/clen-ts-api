@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Controller, LoadSurveyById, forbidden, InvalidParamError, serverError, LoadSurveyResult } from './protocols'
+import { HttpRequest, HttpResponse, Controller, LoadSurveyById, forbidden, InvalidParamError, serverError, LoadSurveyResult, ok } from './protocols'
 
 export class LoadSurveyResultController implements Controller {
   constructor (
@@ -13,8 +13,8 @@ export class LoadSurveyResultController implements Controller {
       if (!isSurveyValid) {
         return forbidden(new InvalidParamError('survey_id'))
       }
-      await this.loadSurveyResult.load(surveyId)
-      return await new Promise(resolve => resolve(null))
+      const surveyResult = await this.loadSurveyResult.load(surveyId)
+      return ok(surveyResult)
     } catch (error) {
       return serverError(error)
     }
