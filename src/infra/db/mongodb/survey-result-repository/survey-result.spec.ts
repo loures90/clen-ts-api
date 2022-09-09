@@ -1,7 +1,9 @@
 import { Collection } from 'mongodb'
-import mongoHelper from '../helpers/mongo-helper'
+import { mongoHelper } from '../helpers/mongo-helper'
 import mockdate from 'mockdate'
 import { SurveyResultRepository } from './survey-result-repository'
+import { SurveyModel } from '../../../../domain/model/survey'
+import { AccountModel } from '../../../../domain/model/account'
 
 describe('Survey MongoRepository', () => {
   let surveyCollection: Collection
@@ -26,10 +28,7 @@ describe('Survey MongoRepository', () => {
     mockdate.reset()
   })
 
-  const makeSut = (): SurveyResultRepository => {
-    return new SurveyResultRepository()
-  }
-  test('Should call add and return a SurveyResult on success', async () => {
+  const makeSurvey = async (): Promise<SurveyModel> => {
     const surveyData = {
       question: 'any_question',
       answers: [{
@@ -41,15 +40,25 @@ describe('Survey MongoRepository', () => {
       date: new Date()
     }
     await surveyCollection.insertOne(surveyData)
-    const survey = mongoHelper.mapper(surveyData)
+    return mongoHelper.mapper(surveyData)
+  }
 
+  const makeAccount = async (): Promise<AccountModel> => {
     const fakeAccount = {
       name: 'any_name',
       email: 'any_email@email.com',
       password: 'any_password'
     }
     await accountCollection.insertOne(fakeAccount)
-    const account = mongoHelper.mapper(fakeAccount)
+    return mongoHelper.mapper(fakeAccount)
+  }
+
+  const makeSut = (): SurveyResultRepository => {
+    return new SurveyResultRepository()
+  }
+  test('Should call add and return a SurveyResult on success', async () => {
+    const survey = await makeSurvey()
+    const account = await makeAccount()
 
     const surveyResultData = {
       accountId: account.id,
@@ -60,27 +69,47 @@ describe('Survey MongoRepository', () => {
     const sut = makeSut()
     const surveyResultResponse = await sut.add(surveyResultData)
     expect(surveyResultResponse).toBeTruthy()
-    expect(surveyResultResponse.id).toBeTruthy()
-    expect(surveyResultResponse.surveyId).toBe(survey.id)
-    expect(surveyResultResponse.accountId).toBe(account.id)
-    expect(surveyResultResponse.answer).toBe('any_answer')
+    expect(surveyResultResponse.surveyId.toString()).toBe(survey.id)
+    expect(surveyResultResponse.question).toBe('any_question')
+    expect(surveyResultResponse.answers).toBeTruthy()
+    expect(surveyResultResponse.answers[0].answer).toBe('any_answer')
+    expect(surveyResultResponse.answers[0].count).toBe(1)
+    expect(surveyResultResponse.answers[0].percent).toBe(100)
+    expect(surveyResultResponse.answers[1].answer).toBe('other_answer')
+    expect(surveyResultResponse.answers[1].count).toBe(0)
+    expect(surveyResultResponse.answers[1].percent).toBe(0)
     expect(surveyResultResponse.date).toBeTruthy()
   })
 
-  test('Should call add and return a SurveyResult on success for a new result', async () => {
-    const surveyResultData = {
-      accountId: 'any_account_id',
-      surveyId: 'any_survey_id',
+  test('Should update a survey result', async () => {
+    const survey = await makeSurvey()
+    const account = await makeAccount()
+    const firstAnswer = {
+      accountId: account.id,
+      surveyId: survey.id,
       answer: 'any_answer',
+      date: new Date()
+    }
+    await surveyResultCollection.insertOne(firstAnswer)
+
+    const surveyResultData = {
+      accountId: account.id,
+      surveyId: survey.id,
+      answer: 'other_answer',
       date: new Date()
     }
     const sut = makeSut()
     const surveyResultResponse = await sut.add(surveyResultData)
     expect(surveyResultResponse).toBeTruthy()
-    expect(surveyResultResponse.id).toBeTruthy()
-    expect(surveyResultResponse.surveyId).toBe('any_survey_id')
-    expect(surveyResultResponse.accountId).toBe('any_account_id')
-    expect(surveyResultResponse.answer).toBe('any_answer')
+    expect(surveyResultResponse.surveyId.toString()).toBe(survey.id)
+    expect(surveyResultResponse.question).toBe('any_question')
+    expect(surveyResultResponse.answers).toBeTruthy()
+    expect(surveyResultResponse.answers[0].answer).toBe('other_answer')
+    expect(surveyResultResponse.answers[0].count).toBe(1)
+    expect(surveyResultResponse.answers[0].percent).toBe(100)
+    expect(surveyResultResponse.answers[1].answer).toBe('any_answer')
+    expect(surveyResultResponse.answers[1].count).toBe(0)
+    expect(surveyResultResponse.answers[1].percent).toBe(0)
     expect(surveyResultResponse.date).toBeTruthy()
   })
 })
