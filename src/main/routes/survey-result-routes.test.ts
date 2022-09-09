@@ -111,8 +111,6 @@ describe('SurveyResult routes', () => {
           answer: 'other_answer'
         })
         .expect(200)
-      expect(res.body.accountId).toEqual(id.toString())
-      expect(res.body.answer).toEqual('other_answer')
     })
   })
 })
