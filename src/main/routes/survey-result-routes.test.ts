@@ -104,7 +104,7 @@ describe('SurveyResult routes', () => {
         date: new Date()
       }
       await surveyResultCollection.insertOne(surveyResultData)
-      const res = await request(app)
+      await request(app)
         .put(`/api/surveys/${survey.id}/results`)
         .set('x-access-token', accessToken)
         .send({
