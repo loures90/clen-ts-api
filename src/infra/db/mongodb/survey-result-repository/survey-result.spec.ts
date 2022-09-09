@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { mongoHelper } from '../helpers/mongo-helper'
 import mockdate from 'mockdate'
 import { SurveyResultRepository } from './survey-result-repository'
@@ -108,6 +108,37 @@ describe('Survey MongoRepository', () => {
     expect(surveyResultResponse.answers[0].count).toBe(1)
     expect(surveyResultResponse.answers[0].percent).toBe(100)
     expect(surveyResultResponse.answers[1].answer).toBe('any_answer')
+    expect(surveyResultResponse.answers[1].count).toBe(0)
+    expect(surveyResultResponse.answers[1].percent).toBe(0)
+    expect(surveyResultResponse.date).toBeTruthy()
+  })
+
+  test('Should load a survey by surveyid', async () => {
+    const survey = await makeSurvey()
+    const account = await makeAccount()
+
+    await surveyResultCollection.findOneAndUpdate({
+      accountId: new ObjectId(account.id),
+      surveyId: new ObjectId(survey.id)
+    }, {
+      $set: {
+        answer: 'any_answer',
+        date: new Date()
+      }
+    }, {
+      upsert: true,
+      returnDocument: 'after'
+    })
+    const sut = makeSut()
+    const surveyResultResponse = await sut.loadBySurveyId(survey.id)
+    expect(surveyResultResponse).toBeTruthy()
+    expect(surveyResultResponse.surveyId.toString()).toBe(survey.id)
+    expect(surveyResultResponse.question).toBe('any_question')
+    expect(surveyResultResponse.answers).toBeTruthy()
+    expect(surveyResultResponse.answers[0].answer).toBe('any_answer')
+    expect(surveyResultResponse.answers[0].count).toBe(1)
+    expect(surveyResultResponse.answers[0].percent).toBe(100)
+    expect(surveyResultResponse.answers[1].answer).toBe('other_answer')
     expect(surveyResultResponse.answers[1].count).toBe(0)
     expect(surveyResultResponse.answers[1].percent).toBe(0)
     expect(surveyResultResponse.date).toBeTruthy()
