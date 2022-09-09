@@ -63,4 +63,26 @@ describe('DB Load Survey Result', () => {
     await sut.load('any_survey_id')
     expect(loadByIdSpy).toHaveBeenCalledWith('any_survey_id')
   })
+
+  test('Should return a surevey result with count and percent equals to 0', async () => {
+    const { sut, loadSurveyResultRepositoryStub } = makeSut()
+    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    const surveyResult = await sut.load('any_survey_id')
+    expect(surveyResult).toEqual({
+      surveyId: 'any_id',
+      question: 'any_question',
+      answers: [{
+        image: 'any_image',
+        answer: 'any_answer',
+        count: 0,
+        percent: 0
+      }, {
+        image: 'other_image',
+        answer: 'other_answer',
+        count: 0,
+        percent: 0
+      }],
+      date: new Date()
+    })
+  })
 })

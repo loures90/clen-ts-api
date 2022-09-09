@@ -60,11 +60,11 @@ describe('AddSurveyResltController', () => {
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
-  test('should return 403 if answer is not valide', async () => {
+  test('should return 403 if answer is not valid', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({
       body: {
-        answer: 'other_answer'
+        answer: 'invalid_answer'
       },
       params: {
         survey_id: 'other_survey_id'
