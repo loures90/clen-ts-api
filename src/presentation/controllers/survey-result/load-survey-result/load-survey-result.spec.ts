@@ -1,7 +1,7 @@
 import mockdate from 'mockdate'
 import { LoadSurveyResultController } from './load-survey-result'
 import { mockLoadSurveyById } from '../../../test'
-import { HttpRequest, LoadSurveyById } from './protocols'
+import { HttpRequest, LoadSurveyById, forbidden, InvalidParamError } from './protocols'
 
 const mockRequest = (): HttpRequest => ({
   params: {
@@ -37,5 +37,12 @@ describe('LoadSurveyResultController', () => {
     const loadByIdSpy = jest.spyOn(loadSurveyByIdStub, 'loadById')
     await sut.handle(mockRequest())
     expect(loadByIdSpy).toHaveBeenCalledWith('any_survey_id')
+  })
+
+  test('Should return 403 when survey_id is not valid', async () => {
+    const { sut, loadSurveyByIdStub } = makeSut()
+    jest.spyOn(loadSurveyByIdStub, 'loadById').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('survey_id')))
   })
 })
