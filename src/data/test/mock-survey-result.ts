@@ -10,7 +10,7 @@ export const mockAddSurveyResult = (): AddSurveyResultParams => ({
 
 export const mockSurveyResult = (): SurveyResultModel => ({
   question: 'any_question',
-  surveyId: 'any_survey_id',
+  surveyId: 'any_id',
   answers: [{
     answer: 'any_answer',
     image: 'any_image',
