@@ -5,7 +5,7 @@ import { HttpRequest, LoadSurveyById, forbidden, serverError, InvalidParamError,
 
 const mockRequest = (): HttpRequest => ({
   params: {
-    surveyId: 'any_survey_id'
+    survey_id: 'any_survey_id'
   }
 })
 
