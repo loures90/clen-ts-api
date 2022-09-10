@@ -9,7 +9,8 @@ import {
   signupAccountSchema,
   addSurveyParams,
   saveSurveyResultParams,
-  surveyResultParamsSchema
+  surveyResultParamsSchema,
+  surveyResultAnswersSchema
 } from './schemas'
 
 export default {
@@ -24,5 +25,6 @@ export default {
   addSurveyParams,
   saveSurveyResultParams,
   surveyResult: surveyResultParamsSchema,
+  surveyResultAnswers: surveyResultAnswersSchema,
   apiKeyAuthSchema
 }
