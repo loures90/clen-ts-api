@@ -1,21 +1,20 @@
-import { LoadAccountByTokenRepository } from './db-load-account-by-token-protocols'
 import { DbLoadAccountByToken } from './db-load-account-by-token'
-import { mockLoadAccountByTokenRepository, mockAccount, DecrypterSpy } from '../../../test'
+import { mockAccount, DecrypterSpy, LoadAccountByTokenRepositorySpy } from '../../../test'
 
 type SutTypes = {
   sut: DbLoadAccountByToken
   decrypterSpy: DecrypterSpy
-  loadAccountByTokenRepositoryStub: LoadAccountByTokenRepository
+  loadAccountByTokenRepositorySpy: LoadAccountByTokenRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const decrypterSpy = new DecrypterSpy()
-  const loadAccountByTokenRepositoryStub = mockLoadAccountByTokenRepository()
-  const sut = new DbLoadAccountByToken(decrypterSpy, loadAccountByTokenRepositoryStub)
+  const loadAccountByTokenRepositorySpy = new LoadAccountByTokenRepositorySpy()
+  const sut = new DbLoadAccountByToken(decrypterSpy, loadAccountByTokenRepositorySpy)
   return {
     sut,
     decrypterSpy,
-    loadAccountByTokenRepositoryStub
+    loadAccountByTokenRepositorySpy
   }
 }
 
@@ -31,15 +30,14 @@ describe('DbLoadAccountByToken', () => {
     expect(response).toBeNull()
   })
   test('Should call LoadAccountByTokenRepository with correct values', async () => {
-    const { sut, loadAccountByTokenRepositoryStub } = makeSut()
-    const loadSpy = jest.spyOn(loadAccountByTokenRepositoryStub, 'loadByToken')
+    const { sut, loadAccountByTokenRepositorySpy } = makeSut()
     await sut.load('any_token', 'any_role')
-    expect(loadSpy).toHaveBeenCalledWith('any_token', 'any_role')
+    expect(loadAccountByTokenRepositorySpy.token).toBe('any_token')
+    expect(loadAccountByTokenRepositorySpy.role).toBe('any_role')
   })
   test('Should return null if loadAccountByTokenRepository returns null', async () => {
-    const { sut, loadAccountByTokenRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByTokenRepositoryStub, 'loadByToken').mockReturnValueOnce(new Promise(resolve => resolve(null)))
-    const response = await sut.load('any_token', 'any_role')
+    const { sut } = makeSut()
+    const response = await sut.load('wrong_token', 'any_role')
     expect(response).toBeNull()
   })
   test('Should return an account on success', async () => {
@@ -48,8 +46,8 @@ describe('DbLoadAccountByToken', () => {
     expect(response).toEqual(mockAccount())
   })
   test('Should throws when loadAccountByTokenRepository throws', async () => {
-    const { sut, loadAccountByTokenRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByTokenRepositoryStub, 'loadByToken').mockImplementationOnce(async () => {
+    const { sut, loadAccountByTokenRepositorySpy } = makeSut()
+    jest.spyOn(loadAccountByTokenRepositorySpy, 'loadByToken').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => reject(new Error('')))
     })
     const promise = sut.load('any_token', 'any_role')

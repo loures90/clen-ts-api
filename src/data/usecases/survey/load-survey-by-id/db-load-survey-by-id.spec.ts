@@ -1,19 +1,18 @@
 import { DbLoadSurveyById } from './db-load-survey-by-id'
-import { LoadSurveyByIdRepository } from './db-load-survey-by-id-protocols'
 import mockdate from 'mockdate'
-import { mockLoadSurveyByIdRepository, mockSurvey } from '../../../test'
+import { LoadSurveyByIdRepositorySpy, mockSurvey } from '../../../test'
 
 type SutTypes = {
   sut: DbLoadSurveyById
-  loadSurveyByIdRepositoryStub: LoadSurveyByIdRepository
+  loadSurveyByIdRepositorySpy: LoadSurveyByIdRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const loadSurveyByIdRepositoryStub = mockLoadSurveyByIdRepository()
-  const sut = new DbLoadSurveyById(loadSurveyByIdRepositoryStub)
+  const loadSurveyByIdRepositorySpy = new LoadSurveyByIdRepositorySpy()
+  const sut = new DbLoadSurveyById(loadSurveyByIdRepositorySpy)
   return {
     sut,
-    loadSurveyByIdRepositoryStub
+    loadSurveyByIdRepositorySpy
   }
 }
 
@@ -26,10 +25,9 @@ describe('DbLoadSurveys', () => {
     mockdate.reset()
   })
   test('Ensure DbLoadSurveyById calls LoadSurveysRepository correctly', async () => {
-    const { sut, loadSurveyByIdRepositoryStub } = makeSut()
-    const loadAllSpy = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
+    const { sut, loadSurveyByIdRepositorySpy } = makeSut()
     await sut.loadById('any_id')
-    expect(loadAllSpy).toHaveBeenCalledWith('any_id')
+    expect(loadSurveyByIdRepositorySpy.id).toBe('any_id')
   })
   test('Ensure DbLoadSurveyById returns a survey on success', async () => {
     const { sut } = makeSut()
@@ -37,8 +35,8 @@ describe('DbLoadSurveys', () => {
     expect(survey).toEqual(mockSurvey())
   })
   test('Should throws when LoadSurveysRepository throws', async () => {
-    const { sut, loadSurveyByIdRepositoryStub } = makeSut()
-    jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById').mockImplementationOnce(async () => {
+    const { sut, loadSurveyByIdRepositorySpy } = makeSut()
+    jest.spyOn(loadSurveyByIdRepositorySpy, 'loadById').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => reject(new Error('')))
     })
     const promise = sut.loadById('any_id')
