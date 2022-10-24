@@ -1,20 +1,25 @@
 import { Hasher } from '../protocols/criptography/hasher'
 import { HashComparer } from '../protocols/criptography/hash-comparer'
+import { faker } from '@faker-js/faker'
 
-export const mockHashComparer = (): HashComparer => {
-  class HashComparerStub implements HashComparer {
-    async compare (value: string, hash: string): Promise<boolean> {
-      return await new Promise(resolve => resolve(true))
-    }
+export class HasherSpy implements Hasher {
+  digest = faker.datatype.uuid()
+  plaintext: string
+
+  async hash (plaintext: string): Promise<string> {
+    this.plaintext = plaintext
+    return this.digest
   }
-  return new HashComparerStub()
 }
 
-export const mockHasher = (): Hasher => {
-  class HasherStub implements Hasher {
-    async hash (value: string): Promise<string> {
-      return 'hashed_password'
-    }
+export class HashComparerSpy implements HashComparer {
+  plaintext: string
+  digest: string
+  isValid = true
+
+  async compare (plaintext: string, digest: string): Promise<boolean> {
+    this.plaintext = plaintext
+    this.digest = digest
+    return this.isValid
   }
-  return new HasherStub()
 }
