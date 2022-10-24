@@ -60,11 +60,11 @@ export const mockLoadAccountByTokenRepository = (): LoadAccountByTokenRepository
   return new LoadAccountByTokenRepositoryStub()
 }
 
-export const mockUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
-  class UpdateAccessTokenRepositoryStubStub implements UpdateAccessTokenRepository {
-    async updateAccessToken (id: string, accessToken: string): Promise<void> {
-      return await new Promise(resolve => resolve(null))
-    }
+export class UpdateAccessTokenRepositorySpy implements UpdateAccessTokenRepository {
+  id: string
+  accessToken: string
+  async updateAccessToken (id: string, accessToken: string): Promise<void> {
+    this.id = id
+    this.accessToken = accessToken
   }
-  return new UpdateAccessTokenRepositoryStubStub()
 }
