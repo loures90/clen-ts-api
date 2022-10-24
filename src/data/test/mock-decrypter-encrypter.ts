@@ -1,20 +1,26 @@
 import { Encrypter } from '../protocols/criptography/encrypter'
 import { Decrypter } from '../protocols/criptography/decrypter'
 
-export const mockDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (token: string): Promise<string> {
-      return await new Promise(resolve => resolve('any_value'))
+export class DecrypterSpy implements Decrypter {
+  value: string
+  token: string
+  async decrypt (token: string): Promise<string> {
+    this.token = token
+    if (this.token === 'any_token') {
+      this.value = 'any_value'
+    } else {
+      this.value = null
     }
+    return await new Promise(resolve => resolve(this.value))
   }
-  return new DecrypterStub()
 }
 
-export const mockEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (value: string): Promise<string> {
-      return await new Promise(resolve => resolve('access_token'))
-    }
+export class EncrypterSpy implements Encrypter {
+  value: string
+  token: string
+  async encrypt (value: string): Promise<string> {
+    this.value = value
+    this.token = 'access_token'
+    return await new Promise(resolve => resolve(this.token))
   }
-  return new EncrypterStub()
 }

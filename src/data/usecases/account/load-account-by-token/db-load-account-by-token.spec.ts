@@ -1,35 +1,33 @@
-import { Decrypter, LoadAccountByTokenRepository } from './db-load-account-by-token-protocols'
+import { LoadAccountByTokenRepository } from './db-load-account-by-token-protocols'
 import { DbLoadAccountByToken } from './db-load-account-by-token'
-import { mockDecrypter, mockLoadAccountByTokenRepository, mockAccount } from '../../../test'
+import { mockLoadAccountByTokenRepository, mockAccount, DecrypterSpy } from '../../../test'
 
 type SutTypes = {
   sut: DbLoadAccountByToken
-  decrypterStub: Decrypter
+  decrypterSpy: DecrypterSpy
   loadAccountByTokenRepositoryStub: LoadAccountByTokenRepository
 }
 
 const makeSut = (): SutTypes => {
-  const decrypterStub = mockDecrypter()
+  const decrypterSpy = new DecrypterSpy()
   const loadAccountByTokenRepositoryStub = mockLoadAccountByTokenRepository()
-  const sut = new DbLoadAccountByToken(decrypterStub, loadAccountByTokenRepositoryStub)
+  const sut = new DbLoadAccountByToken(decrypterSpy, loadAccountByTokenRepositoryStub)
   return {
     sut,
-    decrypterStub,
+    decrypterSpy,
     loadAccountByTokenRepositoryStub
   }
 }
 
 describe('DbLoadAccountByToken', () => {
   test('Should call Decrypter with correct acessToken', async () => {
-    const { sut, decrypterStub } = makeSut()
-    const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
+    const { sut, decrypterSpy } = makeSut()
     await sut.load('any_token', 'any_role')
-    expect(decryptSpy).toHaveBeenCalledWith('any_token')
+    expect(decrypterSpy.token).toBe('any_token')
   })
   test('Should return if Decrypter returns null', async () => {
-    const { sut, decrypterStub } = makeSut()
-    jest.spyOn(decrypterStub, 'decrypt').mockReturnValueOnce(new Promise(resolve => resolve(null)))
-    const response = await sut.load('any_token', 'any_role')
+    const { sut } = makeSut()
+    const response = await sut.load('wrong_token', 'any_role')
     expect(response).toBeNull()
   })
   test('Should call LoadAccountByTokenRepository with correct values', async () => {
@@ -58,8 +56,8 @@ describe('DbLoadAccountByToken', () => {
     await expect(promise).rejects.toThrow()
   })
   test('Should throws when Decrypter throws', async () => {
-    const { sut, decrypterStub } = makeSut()
-    jest.spyOn(decrypterStub, 'decrypt').mockImplementationOnce(async () => {
+    const { sut, decrypterSpy } = makeSut()
+    jest.spyOn(decrypterSpy, 'decrypt').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => reject(new Error('')))
     })
     const promise = sut.load('any_token', 'any_role')
