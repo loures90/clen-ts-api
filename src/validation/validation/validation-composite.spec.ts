@@ -2,21 +2,21 @@ import { InvalidParamError } from '../../presentation/errors'
 import { Validation } from '../../presentation/protocols/validation'
 import { ValidationComposite } from './validation-composite'
 
-const makeValidationStub = (): Validation => {
-  class ValidationStub implements Validation {
-    validate (input: any): Error {
-      return null
-    }
+class ValidationSpy implements Validation {
+  input: any
+  validate (input: any): Error {
+    this.input = input
+    return null
   }
-  return new ValidationStub()
 }
+
 
 type SutTypes = {
   sut: ValidationComposite
   ValidationStubs: Validation[]
 }
 const makeSut = (): SutTypes => {
-  const ValidationStubs = [makeValidationStub(), makeValidationStub()]
+  const ValidationStubs = [new ValidationSpy(), new ValidationSpy()]
   const sut = new ValidationComposite(ValidationStubs)
   return {
     sut,

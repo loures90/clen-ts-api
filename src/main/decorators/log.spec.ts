@@ -5,36 +5,35 @@ import { LogErrorRepository } from '../../data/protocols/db/log/log-error-reposi
 
 type SutTypes = {
   sut: LogControllerDecorator
-  controllerStub: Controller
-  logErrorRepositoryStub: LogErrorRepository
+  controllerSpy: ControllerSpy
+  logErrorRepositorySpy: LogErrorRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const logErrorRepositoryStub = makeLogErrorRepositoryStub()
-  const controllerStub = makeControllerStub()
-  const sut = new LogControllerDecorator(controllerStub, logErrorRepositoryStub)
+  const logErrorRepositorySpy = new LogErrorRepositorySpy()
+  const controllerSpy = new ControllerSpy()
+  const sut = new LogControllerDecorator(controllerSpy, logErrorRepositorySpy)
   return {
     sut,
-    controllerStub,
-    logErrorRepositoryStub
+    controllerSpy,
+    logErrorRepositorySpy
   }
 }
 
-const makeControllerStub = (): Controller => {
-  class ControllerStub implements Controller {
-    async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-      const httpResponse: HttpResponse = makeFakeResponse()
-      return await new Promise(resolve => resolve(httpResponse))
-    }
+class ControllerSpy implements Controller {
+  httpRequest: HttpRequest
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+    this.httpRequest = httpRequest
+    const httpResponse: HttpResponse = makeFakeResponse()
+    return await new Promise(resolve => resolve(httpResponse))
   }
-  return new ControllerStub()
 }
 
-const makeLogErrorRepositoryStub = (): LogErrorRepository => {
-  class LogErrorRepositoryStub implements LogErrorRepository {
-    async logError (stack: string): Promise<void> { }
+class LogErrorRepositorySpy implements LogErrorRepository {
+  stack: string
+  async logError (stack: string): Promise<void> {
+    this.stack = stack
   }
-  return new LogErrorRepositoryStub()
 }
 
 const makeFakeResponse = (): HttpResponse => ({
@@ -54,10 +53,9 @@ const makeFakeRequest = (): HttpRequest => ({ body: { name: 'any_name' } })
 
 describe('LogController Decorator', () => {
   test('Should call handle with correct httpRequest', async () => {
-    const { sut, controllerStub } = makeSut()
-    const handleSpy = jest.spyOn(controllerStub, 'handle')
+    const { sut, controllerSpy } = makeSut()
     await sut.handle(makeFakeRequest())
-    expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest())
+    expect(controllerSpy.httpRequest).toEqual(makeFakeRequest())
   })
   test('Should return correct httpResponse on success', async () => {
     const { sut } = makeSut()
@@ -65,10 +63,9 @@ describe('LogController Decorator', () => {
     expect(httpResponse).toEqual(makeFakeResponse())
   })
   test('Should calls LogErrorRepository with corrects stack error when controllerr returns a serverError', async () => {
-    const { sut, logErrorRepositoryStub, controllerStub } = makeSut()
-    jest.spyOn(controllerStub, 'handle').mockReturnValueOnce(new Promise(resolve => resolve(makeFakeServerError())))
-    const logSpy = jest.spyOn(logErrorRepositoryStub, 'logError')
+    const { sut, logErrorRepositorySpy, controllerSpy } = makeSut()
+    jest.spyOn(controllerSpy, 'handle').mockReturnValueOnce(new Promise(resolve => resolve(makeFakeServerError())))
     await sut.handle(makeFakeRequest())
-    expect(logSpy).toHaveBeenCalledWith('any_stack')
+    expect(logErrorRepositorySpy.stack).toBe('any_stack')
   })
 })
