@@ -1,7 +1,7 @@
 export const signupAccountSchema = {
   type: 'object',
   properties: {
-    accessToken: {
+    token: {
       type: 'string'
     },
     name: {
