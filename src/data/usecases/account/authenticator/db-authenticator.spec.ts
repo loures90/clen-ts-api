@@ -85,9 +85,12 @@ describe('DbAuthenticator', () => {
     const promise = sut.auth(mockAuthentication())
     await expect(promise).rejects.toThrow()
   })
-  test('Should return an access_token on success', async () => {
+  test('Should return an AuthenticationModel on success', async () => {
     const { sut } = makeSut()
-    const accessToken = await sut.auth(mockAuthentication())
-    expect(accessToken).toBe('access_token')
+    const authenticationModel = await sut.auth(mockAuthentication())
+    expect(authenticationModel).toEqual({
+      token: 'access_token',
+      name: 'any_name'
+    })
   })
 })
