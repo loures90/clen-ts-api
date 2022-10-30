@@ -5,4 +5,5 @@ export type SurveyModel = {
   question: string
   answers: AnswerModel[]
   date: Date
+  didAnswer?: boolean
 }
