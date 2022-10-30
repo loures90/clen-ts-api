@@ -22,7 +22,9 @@ export class LoadSurveyByIdRepositorySpy implements LoadSurveyByIdRepository {
 }
 
 export class LoadSurveyRepositorySpy implements LoadSurveysRepository {
-  async loadAll (): Promise<SurveyModel[]> {
+  accountId: string
+  async loadAll (accountId: string): Promise<SurveyModel[]> {
+    this.accountId = accountId
     return await new Promise(resolve => (resolve(mockSurveys())))
   }
 }
