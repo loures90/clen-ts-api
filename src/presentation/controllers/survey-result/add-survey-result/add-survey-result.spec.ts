@@ -19,7 +19,7 @@ const mockInvalidRequest = (): HttpRequest => ({
     answer: 'any_answer'
   },
   params: {
-    survey_id: 'not_valid_survey_id'
+    survey_id: 'wrong_survey_id'
   },
   account_id: 'any_account_id'
 })
@@ -53,10 +53,10 @@ describe('AddSurveyResltController', () => {
   test('Should call LoadSurveyById with correct id', async () => {
     const { sut, loadSurveyByIdSpy } = makeSut()
     await sut.handle(mockRequest())
-    expect(loadSurveyByIdSpy.id).toBe('any_survey_id')
+    expect(loadSurveyByIdSpy.surveyId).toBe('any_survey_id')
   })
   test('Should return 403 when survey_id is not valid', async () => {
-    const { sut} = makeSut()
+    const { sut } = makeSut()
     const httpResponse = await sut.handle(mockInvalidRequest())
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('survey_id')))
   })

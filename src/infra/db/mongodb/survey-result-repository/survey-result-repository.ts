@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { AddSurveyResultRepository } from '../../../../data/protocols/db/survey-result/add-survey-result-repository'
 import { LoadSurveyResultRepository } from '../../../../data/protocols/db/survey-result/load-survey-result-repository'
+import { SurveyResultModel } from '../../../../domain/model/survey-result'
 import { AddSurveyResultParams } from '../../../../domain/usecases/add-survey-result'
 import { mongoHelper, QueryBuilder } from '../helpers'
 
@@ -22,8 +23,8 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
     })
   }
 
-  async loadBySurveyId (surveyId: string): Promise<any> {
-    const surveyResultCollection = await mongoHelper.getCollection('survey-results')
+  async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
+    const surveyResultCollection = await mongoHelper.getCollection('surveyResults')
     const query = new QueryBuilder()
       .match({
         surveyId: new ObjectId(surveyId)
@@ -42,8 +43,8 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
       })
       .lookup({
         from: 'surveys',
-        localField: 'data.surveyId',
         foreignField: '_id',
+        localField: 'data.surveyId',
         as: 'survey'
       })
       .unwind({
@@ -60,6 +61,11 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
         },
         count: {
           $sum: 1
+        },
+        currentAccountAnswer: {
+          $push: {
+            $cond: [{ $eq: ['$data.accountId', new ObjectId(accountId)] }, '$data.answer', '$invalid']
+          }
         }
       })
       .project({
@@ -72,40 +78,37 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
             input: '$_id.answers',
             as: 'item',
             in: {
-              $mergeObjects: [
-                '$$item', {
-                  count: {
-                    $cond: {
-                      if: {
-                        $eq: [
-                          '$$item.answer', '$_id.answer'
-                        ]
-                      },
-                      then: '$count',
-                      else: 0
-                    }
-                  },
-                  percent: {
-                    $cond: {
-                      if: {
-                        $eq: [
-                          '$$item.answer', '$_id.answer'
-                        ]
-                      },
-                      then: {
-                        $multiply: [
-                          {
-                            $divide: [
-                              '$count', '$_id.total'
-                            ]
-                          }, 100
-                        ]
-                      },
-                      else: 0
-                    }
+              $mergeObjects: ['$$item', {
+                count: {
+                  $cond: {
+                    if: {
+                      $eq: ['$$item.answer', '$_id.answer']
+                    },
+                    then: '$count',
+                    else: 0
                   }
+                },
+                percent: {
+                  $cond: {
+                    if: {
+                      $eq: ['$$item.answer', '$_id.answer']
+                    },
+                    then: {
+                      $multiply: [{
+                        $divide: ['$count', '$_id.total']
+                      }, 100]
+                    },
+                    else: 0
+                  }
+                },
+                isCurrentAccountAnswerCount: {
+                  $cond: [{
+                    $eq: ['$$item.answer', {
+                      $arrayElemAt: ['$currentAccountAnswer', 0]
+                    }]
+                  }, 1, 0]
                 }
-              ]
+              }]
             }
           }
         }
@@ -130,9 +133,7 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
             input: '$answers',
             initialValue: [],
             in: {
-              $concatArrays: [
-                '$$value', '$$this'
-              ]
+              $concatArrays: ['$$value', '$$this']
             }
           }
         }
@@ -153,6 +154,9 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
         },
         percent: {
           $sum: '$answers.percent'
+        },
+        isCurrentAccountAnswerCount: {
+          $sum: '$answers.isCurrentAccountAnswerCount'
         }
       })
       .project({
@@ -164,7 +168,10 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
           answer: '$_id.answer',
           image: '$_id.image',
           count: '$count',
-          percent: '$percent'
+          percent: '$percent',
+          isCurrentAccountAnswer: {
+            $eq: ['$isCurrentAccountAnswerCount', 1]
+          }
         }
       })
       .sort({
@@ -182,14 +189,15 @@ export class SurveyResultRepository implements AddSurveyResultRepository, LoadSu
       })
       .project({
         _id: 0,
-        surveyId: '$_id.surveyId',
+        surveyId: {
+          $toString: '$_id.surveyId'
+        },
         question: '$_id.question',
         date: '$_id.date',
         answers: '$answers'
       })
       .build()
-
-    const surveyResult = await surveyResultCollection.aggregate(query).toArray()
+    const surveyResult = await surveyResultCollection.aggregate<SurveyResultModel>(query).toArray()
     return surveyResult.length ? surveyResult[0] : null
   }
 }

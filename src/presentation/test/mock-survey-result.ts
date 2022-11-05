@@ -12,8 +12,10 @@ export class AddSurveyResultSpy implements AddSurveyResult {
 
 export class LoadSurveyResultSpy implements LoadSurveyResult {
   surveyId: string
-  async load (surveyId: string): Promise<SurveyResultModel> {
+  accountId: string
+  async load (surveyId: string, accountId: string): Promise<SurveyResultModel> {
     this.surveyId = surveyId
+    this.accountId = accountId
     return await new Promise(resolve => resolve(mockSurveyResult()))
   }
 }
@@ -25,12 +27,14 @@ export const mockSurveyResult = (): SurveyResultModel => ({
     answer: 'any_answer',
     image: 'any_image',
     count: 1,
-    percent: 50
+    percent: 50,
+    isCurrentAccountAnswer: false
   }, {
     answer: 'other_answer',
     image: 'other_image',
     count: 1,
-    percent: 50
+    percent: 50,
+    isCurrentAccountAnswer: true
   }
   ],
   date: new Date()

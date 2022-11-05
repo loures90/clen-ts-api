@@ -8,7 +8,7 @@ export class DBAddSurveyResult implements AddSurveyResult {
 
   async add (data: AddSurveyResultParams): Promise<SurveyResultModel> {
     await this.addSurveyResultRepository.add(data)
-    const surveyResult = await this.loadSurveyResultRepository.loadBySurveyId(data.surveyId)
+    const surveyResult = await this.loadSurveyResultRepository.loadBySurveyId(data.surveyId, data.accountId)
     return surveyResult
   }
 }

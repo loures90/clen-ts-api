@@ -13,7 +13,9 @@ export class AddSurveyResultRepositorySpy implements AddSurveyResultRepository {
 
 export class LoadSurveyResultRepositorySpy implements LoadSurveyResultRepository {
   surveyId: string
-  async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
+  accountId: string
+  async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
+    this.accountId = accountId
     this.surveyId = surveyId
     if (this.surveyId === 'any_survey_id') {
       return await new Promise(resolve => resolve(mockSurveyResult()))
