@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Middleware, LoadAccountByToken } from './auth-middleware-protocols'
+import { HttpRequest, HttpResponse, Middleware, LoadAccountByToken } from './protocols'
 import { forbidden, ok, serverError } from '../helpers/http/http-helpers'
 import { AccessDeniedError } from '../errors/access-denied-error'
 
@@ -17,7 +17,7 @@ export class AuthMiddleware implements Middleware {
           return ok(account)
         }
       }
-      return await new Promise(resolve => resolve(forbidden(new AccessDeniedError())))
+      return forbidden(new AccessDeniedError())
     } catch (error) {
       return serverError(error)
     }
